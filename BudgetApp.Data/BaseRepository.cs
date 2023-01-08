@@ -6,11 +6,11 @@ using Npgsql;
 
 namespace BudgetApp.Data;
 
-public class BaseData<T> : IBaseRepository<T> where T : class
+public class BaseRepository<T> : IBaseRepository<T> where T : class
 {
     private readonly AppSettings _appSettings;
 
-    public BaseData(AppSettings appSettings)
+    public BaseRepository(AppSettings appSettings)
     {
         _appSettings = appSettings;
     }
