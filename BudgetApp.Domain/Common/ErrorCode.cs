@@ -3,5 +3,6 @@
 public enum ErrorCode
 {
     LoginError,
-    UserNotFound
+    UserNotFound,
+    BudgetError
 }

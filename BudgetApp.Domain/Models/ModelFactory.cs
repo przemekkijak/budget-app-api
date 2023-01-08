@@ -44,8 +44,10 @@ public class ModelFactory
     {
         return new BudgetModel()
         {
+            Id = budget.Id,
             Name = budget.Name,
-            UserId = budget.UserId
+            UserId = budget.UserId,
+            IsDefault = budget.IsDefault
         };
     }
 }

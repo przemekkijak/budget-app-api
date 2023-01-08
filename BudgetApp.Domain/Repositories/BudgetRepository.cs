@@ -6,7 +6,7 @@ namespace BudgetApp.Domain.Repositories;
 
 public class BudgetRepository : BaseRepository<BudgetEntity>, IBudgetRepository
 {
-    protected BudgetRepository(AppSettings appSettings) : base(appSettings)
+    public BudgetRepository(AppSettings appSettings) : base(appSettings)
     {
     }
 
@@ -14,5 +14,11 @@ public class BudgetRepository : BaseRepository<BudgetEntity>, IBudgetRepository
     {
         using var con = CreateConnection();
         return (await con.SelectAsync<BudgetEntity>(a => a.UserId == userId && a.IsDefault)).SingleOrDefault();
+    }
+
+    public async Task<BudgetEntity?> GetByName(int userId, string name)
+    {
+        using var con = CreateConnection();
+        return (await con.SelectAsync<BudgetEntity>(a => a.UserId == userId && a.Name == name)).FirstOrDefault();
     }
 }

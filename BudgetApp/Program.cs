@@ -93,6 +93,7 @@ void ConfigureDapper()
     {
         c.AddMap(new EntityBaseMap());
         c.AddMap(new UserMap());
+        c.AddMap(new BudgetMap());
         c.ForDommel();
     });
  

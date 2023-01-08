@@ -9,8 +9,11 @@ public class BudgetMap : DommelEntityMap<BudgetEntity>
     {
         ToTable("budgets");
 
+        Map(x => x.Id).ToColumn("id").IsKey();
         Map(x => x.UserId).ToColumn("user_id");
         Map(x => x.Name).ToColumn("name");
         Map(x => x.IsDefault).ToColumn("is_default");
+        Map(x => x.CreateDate).ToColumn("create_date");
+        Map(x => x.UpdateDate).ToColumn("update_date");
     }
 }

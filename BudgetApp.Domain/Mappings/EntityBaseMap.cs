@@ -8,5 +8,7 @@ public class EntityBaseMap : DommelEntityMap<EntityBase>
     public EntityBaseMap()
     {
         Map(x => x.Id).ToColumn("id");
+        Map(x => x.CreateDate).ToColumn("create_date");
+        Map(x => x.UpdateDate).ToColumn("update_date");
     }
 }
