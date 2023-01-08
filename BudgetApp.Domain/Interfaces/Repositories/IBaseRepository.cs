@@ -1,5 +1,5 @@
 ﻿
-namespace BudgetApp.Domain.Interfaces;
+namespace BudgetApp.Domain.Interfaces.Repositories;
 
 public interface IBaseRepository
 {
@@ -7,7 +7,7 @@ public interface IBaseRepository
 
 public interface IBaseRepository<T> : IBaseRepository
 {
-    public Task<T> GetByIdAsync(int id);
+    public Task<T?> GetByIdAsync(int id);
     public abstract Task<T> CreateAsync(T entity);
 
 }

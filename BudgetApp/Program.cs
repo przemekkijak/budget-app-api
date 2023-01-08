@@ -3,13 +3,13 @@ using BudgetApp.Core;
 using BudgetApp.Data;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Interfaces;
+using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Mappings;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -28,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
 
 
@@ -75,20 +77,10 @@ void AddServices()
     });
 
     //Services and repositories
-    var baseServiceType = typeof(ServiceBase);
-    foreach (var type in baseServiceType.Assembly.GetTypes()
-                 .Where(x => !x.IsAbstract && x.IsSubclassOf(baseServiceType)))
-    {
-        builder.Services.AddScoped(type);
-    }
-    
-    
-    var baseRepositoryType = typeof(IBaseRepository);
-    foreach (var type in baseRepositoryType.Assembly.GetTypes()
-                 .Where(x => !x.IsAbstract && x.IsSubclassOf(baseServiceType)))
-    {
-        builder.Services.AddScoped(type);
-    }
+    builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+    builder.Services.AddScoped<UserService>();
 }
 
 void ConfigureDapper()
@@ -96,6 +88,7 @@ void ConfigureDapper()
     DefaultTypeMap.MatchNamesWithUnderscores = true;
     FluentMapper.Initialize(c =>
     {
+        c.AddMap(new EntityBaseMap());
         c.AddMap(new UserMap());
         c.ForDommel();
     });
