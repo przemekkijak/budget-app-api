@@ -1,10 +1,9 @@
 using System.Text;
 using BudgetApp.Core;
-using BudgetApp.Data;
 using BudgetApp.Domain;
-using BudgetApp.Domain.Interfaces;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Mappings;
+using BudgetApp.Domain.Repositories;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;

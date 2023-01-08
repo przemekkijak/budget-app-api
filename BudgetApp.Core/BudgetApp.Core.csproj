@@ -8,12 +8,15 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
-      <ProjectReference Include="..\BudgetApp.Models\BudgetApp.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="BCrypt-Core" Version="2.0.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Interfaces" />
     </ItemGroup>
 
 </Project>

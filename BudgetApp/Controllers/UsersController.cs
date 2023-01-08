@@ -1,6 +1,6 @@
 ﻿using BudgetApp.Core;
-using BudgetApp.Models;
-using Lisek.Domain;
+using BudgetApp.Domain;
+using BudgetApp.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,18 +18,10 @@ public class UsersController : ApiControllerBase
 
     [HttpPost]
     [Route("register")]
-    public async Task<ExecutionResult<LoginResultModel?>> Register([FromBody] RegistrationModel model)
+    public async Task<ExecutionResult<LoginResultModel>> Register([FromBody] RegistrationModel model)
     {
         var user = ModelFactory.Create(model);
-        
-        var register = await _userService.RegisterUser(user);
-        
-        LoginResultModel? resultModel = null;
-        
-        if (register != null)
-            resultModel = ModelFactory.Create(register);
-        
-        return new ExecutionResult<LoginResultModel?>(resultModel);
+        return await _userService.RegisterUser(user);
     }
 
     [HttpPost]
@@ -37,26 +29,13 @@ public class UsersController : ApiControllerBase
     public async Task<ExecutionResult<LoginResultModel>> Login([FromBody] RegistrationModel model)
     {
         var user = ModelFactory.Create(model);
-        
-        var authenticateUser = await _userService.AuthenticateUser(user);
-
-        return new ExecutionResult<LoginResultModel>()
-        {
-            Errors = authenticateUser.Errors,
-            Success = authenticateUser.Success,
-            Value = ModelFactory.Create(authenticateUser?.Value)
-        };
+        return await _userService.AuthenticateUser(user);
     }
 
     [Authorize]
     [HttpGet]
     public async Task<ExecutionResult<UserModel>> GetProfile()
     {
-        var user = await _userService.GetProfile(UserId);
-        return new ExecutionResult<UserModel>()
-        {
-            Errors = user.Errors,
-            Value = ModelFactory.Create(user.Value)
-        };
+       return await _userService.GetProfile(UserId);
     }
 }

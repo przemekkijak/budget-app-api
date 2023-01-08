@@ -3,4 +3,5 @@
 public enum ErrorCode
 {
     LoginError,
+    UserNotFound
 }

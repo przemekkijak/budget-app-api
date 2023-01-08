@@ -1,9 +1,8 @@
-﻿using BudgetApp.Domain;
-using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
 using Dommel;
 
-namespace BudgetApp.Data;
+namespace BudgetApp.Domain.Repositories;
 
 public class UserRepository : BaseRepository<UserEntity>, IUserRepository
 {

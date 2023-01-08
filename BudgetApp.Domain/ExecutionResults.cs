@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using BudgetApp.Domain;
 
-namespace Lisek.Domain
+namespace BudgetApp.Domain
 {
     [DebuggerDisplay("IsSuccess: {Success}")]
     public class ExecutionResult

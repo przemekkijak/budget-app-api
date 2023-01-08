@@ -2,12 +2,12 @@
 using System.Security.Claims;
 using System.Text;
 using BCrypt;
+using BudgetApp.Core.Interfaces.Services;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Common;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
-using BudgetApp.Domain.Interfaces.Services;
-using Lisek.Domain;
+using BudgetApp.Domain.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BudgetApp.Core;
@@ -23,37 +23,42 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<ExecutionResult<UserEntity>> GetProfile(int userId)
+    public async Task<ExecutionResult<UserModel>> GetProfile(int userId)
     {
         var userEntity = await _userRepository.GetByIdAsync(userId);
-        return new ExecutionResult<UserEntity>(userEntity);
+        if (userEntity is null)
+        {
+            return new ExecutionResult<UserModel>(new ErrorInfo(ErrorCode.UserNotFound, MessageCode.UserNotFound));
+        }
+
+        return new ExecutionResult<UserModel>(ModelFactory.Create(userEntity));
     }
 
-    public async Task<ExecutionResult<LoginResult>> AuthenticateUser(User model)
+    public async Task<ExecutionResult<LoginResultModel>> AuthenticateUser(User model)
     {
         var userEntity = await _userRepository.GetByEmail(model.Email);
         if (userEntity is null)
         {
-            return new ExecutionResult<LoginResult>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
+            return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
         }
 
         if (!BCryptHelper.CheckPassword(model.Password, userEntity.PasswordHash))
         {
-            return new ExecutionResult<LoginResult>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
+            return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
         }
 
         var token = CreateToken(userEntity);
-        return new ExecutionResult<LoginResult>()
+        return new ExecutionResult<LoginResultModel>()
         {
-            Value = new LoginResult()
+            Value = new LoginResultModel()
             {
                 Token = token,
-                User = userEntity
+                User = ModelFactory.Create(userEntity)
             }
         };
     }
     
-    public async Task<LoginResult?> RegisterUser(User model)
+    public async Task<ExecutionResult<LoginResultModel>> RegisterUser(User model)
     {
         var salt = BCryptHelper.GenerateSalt();
         var userEntity = new UserEntity()
@@ -66,9 +71,13 @@ public class UserService : IUserService
 
         var createUser = await _userRepository.CreateAsync(userEntity);
         var token = CreateToken(createUser);
-        return new LoginResult()
+        return new ExecutionResult<LoginResultModel>()
         {
-            Token = token
+            Value = new LoginResultModel()
+            {
+                Token = token,
+                User = ModelFactory.Create(userEntity) 
+            }
         };
     }
 

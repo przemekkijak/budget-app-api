@@ -16,9 +16,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BudgetApp.Core\BudgetApp.Core.csproj" />
-      <ProjectReference Include="..\BudgetApp.Data\BudgetApp.Data.csproj" />
-      <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
-      <ProjectReference Include="..\BudgetApp.Models\BudgetApp.Models.csproj" />
     </ItemGroup>
 
 </Project>

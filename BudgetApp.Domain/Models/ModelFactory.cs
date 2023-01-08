@@ -1,7 +1,6 @@
-﻿using BudgetApp.Domain;
-using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Entities;
 
-namespace BudgetApp.Models;
+namespace BudgetApp.Domain.Models;
 
 public class ModelFactory
 {
