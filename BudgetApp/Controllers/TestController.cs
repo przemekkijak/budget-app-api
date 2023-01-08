@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BudgetApp.Data;
+using BudgetApp.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetApp.Controllers;
 
 [Route("test")]
 public class TestController : Controller
 {
-    public TestController()
+    private readonly UserData _userData;
+
+    public TestController(UserData userData)
     {
-        
+        _userData = userData;
     }
 
     [HttpGet]
-    public string Test()
+    public async Task<UserEntity> Test()
     {
-        return "test";
+        return await _userData.GetUserById(1);
     }
 }

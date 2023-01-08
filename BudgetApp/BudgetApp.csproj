@@ -7,7 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="Npgsql" Version="7.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BudgetApp.Data\BudgetApp.Data.csproj" />
+      <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
+      <ProjectReference Include="..\BudgetApp.Models\BudgetApp.Models.csproj" />
     </ItemGroup>
 
 </Project>
