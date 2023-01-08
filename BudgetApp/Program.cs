@@ -1,22 +1,30 @@
-
 using BudgetApp.Data;
 using BudgetApp.Domain;
+using BudgetApp.Domain.Mappings;
+using Dapper;
+using Dapper.FluentMap;
+using Dapper.FluentMap.Dommel;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AddServices();
+
+DefaultTypeMap.MatchNamesWithUnderscores = true;
+FluentMapper.Initialize(c =>
+{
+    c.AddMap(new UserMap());
+    c.ForDommel();
+});
+
+
 var app = builder.Build();
-
 app.MapControllers();
-
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 app.Run();
 
@@ -32,6 +40,4 @@ void AddServices()
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddTransient<UserData>();
-    
-
 }

@@ -15,8 +15,15 @@ public class TestController : Controller
     }
 
     [HttpGet]
-    public async Task<UserEntity> Test()
+    [Route("{id}")]
+    public async Task<UserEntity> Test(int id)
     {
-        return await _userData.GetUserById(1);
+        return await _userData.GetByIdAsync(id);
+    }
+
+    [HttpPost]
+    public async Task<UserEntity> Create([FromBody] UserEntity user)
+    {
+        return await _userData.CreateAsync(user);
     }
 }
