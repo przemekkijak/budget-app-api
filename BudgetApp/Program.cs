@@ -1,5 +1,6 @@
 using System.Text;
 using BudgetApp.Core;
+using BudgetApp.Core.Interfaces.Services;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Mappings;
@@ -78,8 +79,11 @@ void AddServices()
     //Services and repositories
     builder.Services.AddScoped<IBaseRepository, BaseRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 
-    builder.Services.AddScoped<UserService>();
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IBudgetService, BudgetService>();
+    
 }
 
 void ConfigureDapper()

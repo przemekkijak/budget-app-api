@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetApp.Controllers;
 
-[Route("users")]
+[Route("api/users")]
 public class UsersController : ApiControllerBase
 {
     private readonly UserService _userService;

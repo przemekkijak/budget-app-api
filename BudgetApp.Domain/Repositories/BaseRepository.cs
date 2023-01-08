@@ -22,13 +22,13 @@ public class BaseRepository<T> : BaseRepository, IBaseRepository<T> where T : En
 
     protected IDbConnection CreateConnection() => new NpgsqlConnection(_appSettings.ConnectionString);
 
-    public async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id)
     {
         using var con = CreateConnection();
         return (await con.SelectAsync<T>(a => a.Id == id)).SingleOrDefault();
     }
 
-    public async Task<T> CreateAsync(T entity)
+    public virtual async Task<T> CreateAsync(T entity)
     {
         using var con = CreateConnection();
         var createdEntity = (int)await con.InsertAsync(entity);

@@ -39,4 +39,13 @@ public class ModelFactory
             Password = model.Password
         };
     }
+
+    public static BudgetModel Create(BudgetEntity budget)
+    {
+        return new BudgetModel()
+        {
+            Name = budget.Name,
+            UserId = budget.UserId
+        };
+    }
 }
