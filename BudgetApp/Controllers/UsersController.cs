@@ -16,6 +16,13 @@ public class UsersController : ApiControllerBase
         _userService = userService;
     }
 
+    [HttpGet]
+    [Route("test")]
+    public async Task<ExecutionResult> Test()
+    {
+        return new ExecutionResult();
+    }
+
     [HttpPost]
     [Route("register")]
     public async Task<ExecutionResult<LoginResultModel>> Register([FromBody] RegistrationModel model)

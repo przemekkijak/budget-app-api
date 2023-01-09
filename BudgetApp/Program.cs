@@ -28,14 +28,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();
 app.Run();
 
-
 void AddServices()
 {
-    
+
     //AppSettings
     var appSettingsSection = builder.Configuration.GetSection("AppSettings");
     builder.Services.Configure<AppSettings>(appSettingsSection);
