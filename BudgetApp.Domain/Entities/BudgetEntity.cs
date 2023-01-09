@@ -7,4 +7,6 @@ public class BudgetEntity : EntityBase
     public string Name { get; set; }
 
     public bool IsDefault { get; set; }
+
+    public IList<TransactionEntity> Transactions { get; set; }
 }
