@@ -51,6 +51,39 @@ public class TransactionService : ITransactionService
         };
 
         await transactionRepository.CreateAsync(transactionEntity);
+        return new ExecutionResult();
+    }
+
+    public async Task<ExecutionResult<bool>> UpdateTransaction(int userId, int transactionId, AddTransactionModel model)
+    {
+        var transaction = await transactionRepository.GetByIdAsync(transactionId);
+        if (transaction is null)
+        {
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.TransactionError, MessageCode.TransactionNotFound));
+        }
+
+        var budget = await budgetRepository.GetByIdAsync(transaction.BudgetId);
+        if (budget is null)
+        {
+            //TODO Log critical - create logging service 
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.BudgetNotFound));
+        }
+        
+        var canPerformAction =
+            await IsUserAuthorizedToPerformActionOnBudget(userId, budget, TransactionActionEnum.Write);
+
+        if (!canPerformAction)
+        {
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
+        }
+
+        transaction.Amount = model.Amount;
+        transaction.StatusEnum = model.StatusEnum;
+        transaction.UpdateDate = TimeService.Now;
+
+        var update = await transactionRepository.UpdateAsync(transaction);
+        //TODO what if false? Handle and log error 
+        return new ExecutionResult<bool>(update);
     }
 
     private async Task<bool> IsUserAuthorizedToPerformActionOnBudget(int userId, BudgetEntity budget,

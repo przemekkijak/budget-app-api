@@ -34,4 +34,10 @@ public class BaseRepository<T> : BaseRepository, IBaseRepository<T> where T : En
         var createdEntity = (int)await con.InsertAsync(entity);
         return await con.GetAsync<T>(createdEntity);
     }
+
+    public virtual async Task<bool> UpdateAsync(T entity)
+    {
+        using var con = CreateConnection();
+        return await con.UpdateAsync(entity);
+    }
 }

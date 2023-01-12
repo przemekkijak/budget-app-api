@@ -7,5 +7,6 @@ public enum MessageCode
     BudgetAlreadyExists,
     BudgetNotFound,
     Unauthorized,
-    InvalidAmount
+    InvalidAmount,
+    TransactionNotFound
 }

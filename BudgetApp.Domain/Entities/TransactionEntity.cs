@@ -5,7 +5,7 @@ namespace BudgetApp.Domain.Entities;
 
 public class TransactionEntity : EntityBase
 {
-    public int BudgetId { get; set; }
+    public int BudgetId { get; set; } //TODO Add FK to Budget table
 
     public decimal Amount { get; set; }
 

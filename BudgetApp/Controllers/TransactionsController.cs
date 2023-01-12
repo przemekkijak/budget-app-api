@@ -21,4 +21,12 @@ public class TransactionsController : ApiControllerBase
     {
         return await transactionService.AddTransaction(UserId, model);
     }
+
+    [HttpPut]
+    [Route("id")]
+    public async Task<ExecutionResult<bool>> UpdateTransactions(int transactionId, [FromBody] AddTransactionModel model)
+    {
+        var updated = await transactionService.UpdateTransaction(UserId, transactionId, model);
+        return new ExecutionResult<bool>(updated);
+    }
 }
