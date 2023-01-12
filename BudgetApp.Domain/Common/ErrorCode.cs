@@ -4,5 +4,6 @@ public enum ErrorCode
 {
     LoginError,
     UserNotFound,
-    BudgetError
+    BudgetError,
+    TransactionError
 }

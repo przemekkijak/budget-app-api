@@ -12,7 +12,7 @@ public class TransactionMap : DommelEntityMap<TransactionEntity>
         Map(x => x.Id).ToColumn("id").IsKey();
         Map(x => x.BudgetId).ToColumn("budget_id");
         Map(x => x.Amount).ToColumn("amount");
-        Map(x => x.Status).ToColumn("status");
+        Map(x => x.StatusEnum).ToColumn("status");
         Map(x => x.CreateDate).ToColumn("create_date");
         Map(x => x.UpdateDate).ToColumn("update_date");
     }

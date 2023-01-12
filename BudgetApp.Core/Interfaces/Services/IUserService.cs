@@ -1,5 +1,6 @@
 ﻿using BudgetApp.Domain;
 using BudgetApp.Domain.Models;
+using BudgetApp.Domain.Objects;
 
 namespace BudgetApp.Core.Interfaces.Services;
 

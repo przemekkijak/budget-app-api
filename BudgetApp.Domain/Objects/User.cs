@@ -1,4 +1,4 @@
-﻿namespace BudgetApp.Domain;
+﻿namespace BudgetApp.Domain.Objects;
 
 public class User
 {

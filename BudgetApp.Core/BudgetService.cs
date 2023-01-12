@@ -9,16 +9,16 @@ namespace BudgetApp.Core;
 
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetRepository _budgetRepository;
+    private readonly IBudgetRepository budgetRepository;
 
     public BudgetService(IBudgetRepository budgetRepository)
     {
-        _budgetRepository = budgetRepository;
+        this.budgetRepository = budgetRepository;
     }
 
     public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId)
     {
-        var budget = await _budgetRepository.GetDefault(userId);
+        var budget = await budgetRepository.GetDefault(userId);
         if (budget is null)
         {
             //TODO handle error
@@ -30,7 +30,7 @@ public class BudgetService : IBudgetService
 
     public async Task<ExecutionResult<BudgetModel>> CreateBudget(int userId, BudgetModel budget)
     {
-        var existing = await _budgetRepository.GetByName(userId, budget.Name);
+        var existing = await budgetRepository.GetByName(userId, budget.Name);
         if (existing != null)
         {
             return new ExecutionResult<BudgetModel>(new ErrorInfo(ErrorCode.BudgetError,
@@ -46,7 +46,7 @@ public class BudgetService : IBudgetService
             UpdateDate = TimeService.Now
         };
 
-        var createdBudget = await _budgetRepository.CreateAsync(entity);
+        var createdBudget = await budgetRepository.CreateAsync(entity);
         return new ExecutionResult<BudgetModel>(ModelFactory.Create(createdBudget));
     }
 }

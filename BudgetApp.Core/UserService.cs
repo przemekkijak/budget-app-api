@@ -8,24 +8,25 @@ using BudgetApp.Domain.Common;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Models;
+using BudgetApp.Domain.Objects;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BudgetApp.Core;
 
 public class UserService : IUserService
 {
-    private readonly AppSettings _appSettings;
-    private readonly IUserRepository _userRepository;
+    private readonly AppSettings appSettings;
+    private readonly IUserRepository userRepository;
 
     public UserService(AppSettings appSettings, IUserRepository userRepository)
     {
-        _appSettings = appSettings;
-        _userRepository = userRepository;
+        this.appSettings = appSettings;
+        this.userRepository = userRepository;
     }
 
     public async Task<ExecutionResult<UserModel>> GetProfile(int userId)
     {
-        var userEntity = await _userRepository.GetByIdAsync(userId);
+        var userEntity = await userRepository.GetByIdAsync(userId);
         if (userEntity is null)
         {
             return new ExecutionResult<UserModel>(new ErrorInfo(ErrorCode.UserNotFound, MessageCode.UserNotFound));
@@ -36,7 +37,7 @@ public class UserService : IUserService
 
     public async Task<ExecutionResult<LoginResultModel>> AuthenticateUser(User model)
     {
-        var userEntity = await _userRepository.GetByEmail(model.Email);
+        var userEntity = await userRepository.GetByEmail(model.Email);
         if (userEntity is null)
         {
             return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
@@ -69,7 +70,7 @@ public class UserService : IUserService
             UpdateDate = TimeService.Now
         };
 
-        var createUser = await _userRepository.CreateAsync(userEntity);
+        var createUser = await userRepository.CreateAsync(userEntity);
         var token = CreateToken(createUser);
         return new ExecutionResult<LoginResultModel>()
         {
@@ -92,13 +93,13 @@ public class UserService : IUserService
      
         var tokenLifetime = TimeSpan.FromDays(1);
         var jwt = new JwtSecurityToken(
-            issuer: _appSettings.TokenIssuer,
-            audience: _appSettings.TokenIssuer,
+            issuer: appSettings.TokenIssuer,
+            audience: appSettings.TokenIssuer,
             notBefore: now,
             claims: userClaims,
             expires: now.Add(tokenLifetime),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.TokenSigningKey)),
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey)),
                 SecurityAlgorithms.HmacSha256Signature));
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);

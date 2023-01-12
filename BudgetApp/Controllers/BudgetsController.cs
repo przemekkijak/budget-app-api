@@ -10,22 +10,22 @@ namespace BudgetApp.Controllers;
 [Authorize]
 public class BudgetsController : ApiControllerBase
 {
-    private readonly IBudgetService _budgetService;
+    private readonly IBudgetService budgetService;
 
     public BudgetsController(IBudgetService budgetService)
     {
-        _budgetService = budgetService;
+        this.budgetService = budgetService;
     }
 
     [HttpGet]
     public async Task<ExecutionResult<BudgetModel>> GetDefault()
     {
-        return await _budgetService.GetDefault(UserId);
+        return await budgetService.GetDefault(UserId);
     }
 
     [HttpPost]
     public async Task<ExecutionResult<BudgetModel>> CreateBudget([FromBody] BudgetModel model)
     {
-        return await _budgetService.CreateBudget(UserId, model);
+        return await budgetService.CreateBudget(UserId, model);
     }
 }

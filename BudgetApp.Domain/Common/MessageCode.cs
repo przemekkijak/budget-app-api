@@ -4,5 +4,8 @@ public enum MessageCode
 {
     UserNotFound,
     InvalidEmailOrPassword,
-    BudgetAlreadyExists
+    BudgetAlreadyExists,
+    BudgetNotFound,
+    Unauthorized,
+    InvalidAmount
 }

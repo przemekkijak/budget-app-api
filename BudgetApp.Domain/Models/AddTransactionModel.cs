@@ -1,15 +1,13 @@
-﻿using BudgetApp.Domain.Enums;
+using BudgetApp.Domain.Enums;
 using BudgetApp.Domain.Objects;
 
-namespace BudgetApp.Domain.Entities;
+namespace BudgetApp.Domain.Models;
 
-public class TransactionEntity : EntityBase
+public class AddTransactionModel
 {
     public int BudgetId { get; set; }
 
     public decimal Amount { get; set; }
 
     public TransactionStatusEnum StatusEnum { get; set; }
-
-    public int UserId { get; set; } //TODO add to database
 }
