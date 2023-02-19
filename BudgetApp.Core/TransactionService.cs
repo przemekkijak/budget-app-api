@@ -19,6 +19,12 @@ public class TransactionService : ITransactionService
         this.budgetRepository = budgetRepository;
     }
 
+    public async Task<List<TransactionModel>> GetTransactionsForBudget(int budgetId)
+    {
+        var entities = await transactionRepository.GetForBudget(budgetId);
+        return entities.Select(ModelFactory.Create).ToList();
+    }
+
     public async Task<ExecutionResult> AddTransaction(int userId, AddTransactionModel model)
     {
         if (model.Amount < decimal.Zero)
@@ -45,7 +51,7 @@ public class TransactionService : ITransactionService
             BudgetId = model.BudgetId,
             Amount = model.Amount,
             UserId = userId,
-            StatusEnum = model.StatusEnum,
+            Status = model.StatusEnum,
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now
         };
@@ -78,7 +84,7 @@ public class TransactionService : ITransactionService
         }
 
         transaction.Amount = model.Amount;
-        transaction.StatusEnum = model.StatusEnum;
+        transaction.Status = model.StatusEnum;
         transaction.UpdateDate = TimeService.Now;
 
         var update = await transactionRepository.UpdateAsync(transaction);

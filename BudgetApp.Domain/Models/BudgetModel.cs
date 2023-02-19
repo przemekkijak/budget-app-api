@@ -9,4 +9,6 @@ public class BudgetModel
     public int UserId { get; set; }
 
     public bool IsDefault { get; set; }
+
+    public List<TransactionModel> Transactions { get; set; }
 }

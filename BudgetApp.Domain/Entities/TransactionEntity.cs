@@ -9,7 +9,9 @@ public class TransactionEntity : EntityBase
 
     public decimal Amount { get; set; }
 
-    public TransactionStatusEnum StatusEnum { get; set; }
+    public TransactionStatusEnum Status { get; set; }
 
     public int UserId { get; set; } //TODO add to database
+
+    public string Description { get; set; }
 }

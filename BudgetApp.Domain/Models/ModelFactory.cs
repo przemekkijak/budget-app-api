@@ -18,17 +18,17 @@ public class ModelFactory
         };
     }
 
-    public static UserModel Create(UserEntity? user)
+    public static UserModel Create(UserEntity? entity)
     {
-        if (user is null)
+        if (entity is null)
             return new UserModel();
         
         return new UserModel()
         {
-            Id = user.Id,
-            Email = user.Email,
-            CreateDate = user.CreateDate,
-            UpdateDate = user.UpdateDate
+            Id = entity.Id,
+            Email = entity.Email,
+            CreateDate = entity.CreateDate,
+            UpdateDate = entity.UpdateDate
         };
     }
 
@@ -41,14 +41,26 @@ public class ModelFactory
         };
     }
 
-    public static BudgetModel Create(BudgetEntity budget)
+    public static BudgetModel Create(BudgetEntity entity)
     {
         return new BudgetModel()
         {
-            Id = budget.Id,
-            Name = budget.Name,
-            UserId = budget.UserId,
-            IsDefault = budget.IsDefault
+            Id = entity.Id,
+            Name = entity.Name,
+            UserId = entity.UserId,
+            IsDefault = entity.IsDefault
+        };
+    }
+
+    public static TransactionModel Create(TransactionEntity entity)
+    {
+        return new TransactionModel()
+        {
+            BudgetId = entity.BudgetId,
+            Amount = entity.Amount,
+            Status = entity.Status,
+            UserId = entity.UserId,
+            Description = entity.Description
         };
     }
 }

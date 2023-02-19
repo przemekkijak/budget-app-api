@@ -10,10 +10,13 @@ namespace BudgetApp.Core;
 public class BudgetService : IBudgetService
 {
     private readonly IBudgetRepository budgetRepository;
+    private readonly ITransactionService transactionService;
 
-    public BudgetService(IBudgetRepository budgetRepository)
+    public BudgetService(IBudgetRepository budgetRepository,
+        ITransactionService transactionService)
     {
         this.budgetRepository = budgetRepository;
+        this.transactionService = transactionService;
     }
 
     public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId)
@@ -25,7 +28,10 @@ public class BudgetService : IBudgetService
             return new ExecutionResult<BudgetModel>();
         }
         
-        return new ExecutionResult<BudgetModel>(ModelFactory.Create(budget));
+        var budgetModel = ModelFactory.Create(budget);
+        budgetModel.Transactions =  await transactionService.GetTransactionsForBudget(budget.Id);
+
+        return new ExecutionResult<BudgetModel>(budgetModel);
     }
 
     public async Task<ExecutionResult<BudgetModel>> CreateBudget(int userId, BudgetModel budget)

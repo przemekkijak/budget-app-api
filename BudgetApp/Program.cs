@@ -80,10 +80,13 @@ void AddServices()
     builder.Services.AddScoped<IBaseRepository, BaseRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+    builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<ITransactionService, TransactionService>();
     builder.Services.AddScoped<IBudgetService, BudgetService>();
-    
+
+
 }
 
 void ConfigureDapper()
