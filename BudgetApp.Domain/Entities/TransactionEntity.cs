@@ -1,5 +1,4 @@
 ﻿using BudgetApp.Domain.Enums;
-using BudgetApp.Domain.Objects;
 
 namespace BudgetApp.Domain.Entities;
 

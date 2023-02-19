@@ -13,4 +13,8 @@ public class TransactionModel
     public int UserId { get; init; }
 
     public string Description { get; set; }
+
+    public DateTime CreateDate { get; set; }
+    
+    public DateTime UpdateDate { get; set; }
 }

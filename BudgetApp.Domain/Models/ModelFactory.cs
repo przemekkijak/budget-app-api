@@ -60,7 +60,9 @@ public class ModelFactory
             Amount = entity.Amount,
             Status = entity.Status,
             UserId = entity.UserId,
-            Description = entity.Description
+            Description = entity.Description,
+            CreateDate = entity.CreateDate,
+            UpdateDate = entity.UpdateDate
         };
     }
 }
