@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace BudgetApp.Controllers;
 
 [Authorize]
+[Route("api/transactions")]
+
 public class TransactionsController : ApiControllerBase
 {
     private readonly ITransactionService transactionService;
@@ -23,10 +25,17 @@ public class TransactionsController : ApiControllerBase
     }
 
     [HttpPut]
-    [Route("id")]
+    [Route("{transactionId}")]
     public async Task<ExecutionResult<bool>> UpdateTransactions(int transactionId, [FromBody] AddTransactionModel model)
     {
         var updated = await transactionService.UpdateTransaction(UserId, transactionId, model);
         return new ExecutionResult<bool>(updated);
+    }
+
+    [HttpDelete]
+    [Route("{transactionId}")]
+    public async Task<ExecutionResult> DeleteTransaction(int transactionId)
+    {
+        return await transactionService.DeleteTransaction(UserId, transactionId);
     }
 }

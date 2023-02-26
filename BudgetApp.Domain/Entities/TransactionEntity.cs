@@ -10,7 +10,9 @@ public class TransactionEntity : EntityBase
 
     public TransactionStatusEnum Status { get; set; }
 
-    public int UserId { get; set; } //TODO add to database
-
+    public int UserId { get; set; }
+    
     public string Description { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

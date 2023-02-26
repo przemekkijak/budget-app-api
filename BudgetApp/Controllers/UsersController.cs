@@ -35,6 +35,11 @@ public class UsersController : ApiControllerBase
     [Route("login")]
     public async Task<ExecutionResult<LoginResultModel>> Login([FromBody] RegistrationModel model)
     {
+        if (model.GrantType == "refresh_token")
+        {
+            
+        }
+        
         var user = ModelFactory.Create(model);
         return await userService.AuthenticateUser(user);
     }

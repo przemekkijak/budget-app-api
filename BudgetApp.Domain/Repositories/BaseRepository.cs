@@ -40,4 +40,10 @@ public class BaseRepository<T> : BaseRepository, IBaseRepository<T> where T : En
         using var con = CreateConnection();
         return await con.UpdateAsync(entity);
     }
+
+    public virtual async Task DeleteAsync(T entity)
+    {
+        using var con = CreateConnection();
+        await con.DeleteAsync(entity);
+    }
 }

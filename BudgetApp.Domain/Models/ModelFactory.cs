@@ -56,6 +56,7 @@ public class ModelFactory
     {
         return new TransactionModel()
         {
+            Id = entity.Id,
             BudgetId = entity.BudgetId,
             Amount = entity.Amount,
             Status = entity.Status,

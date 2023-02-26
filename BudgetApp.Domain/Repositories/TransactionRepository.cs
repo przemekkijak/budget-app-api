@@ -13,6 +13,6 @@ public class TransactionRepository : BaseRepository<TransactionEntity>, ITransac
     public async Task<List<TransactionEntity>> GetForBudget(int budgetId)
     {
         using var con = CreateConnection();
-        return (await con.SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId)).ToList();
+        return (await con.SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId && a.IsDeleted == false)).ToList();
     }
 }

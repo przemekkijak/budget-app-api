@@ -10,4 +10,6 @@ public class AddTransactionModel
     public decimal Amount { get; set; }
 
     public TransactionStatusEnum StatusEnum { get; set; }
+
+    public string Description { get; set; }
 }

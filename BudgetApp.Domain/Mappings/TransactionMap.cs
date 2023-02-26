@@ -16,5 +16,7 @@ public class TransactionMap : DommelEntityMap<TransactionEntity>
         Map(x => x.CreateDate).ToColumn("create_date");
         Map(x => x.UpdateDate).ToColumn("update_date");
         Map(x => x.Description).ToColumn("description");
+        Map(x => x.UserId).ToColumn("user_id");
+        Map(x => x.IsDeleted).ToColumn("is_deleted");
     }
 }

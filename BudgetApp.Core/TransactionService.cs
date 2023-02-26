@@ -52,8 +52,10 @@ public class TransactionService : ITransactionService
             Amount = model.Amount,
             UserId = userId,
             Status = model.StatusEnum,
+            Description = model.Description,
             CreateDate = TimeService.Now,
-            UpdateDate = TimeService.Now
+            UpdateDate = TimeService.Now,
+            IsDeleted = false
         };
 
         await transactionRepository.CreateAsync(transactionEntity);
@@ -90,6 +92,36 @@ public class TransactionService : ITransactionService
         var update = await transactionRepository.UpdateAsync(transaction);
         //TODO what if false? Handle and log error 
         return new ExecutionResult<bool>(update);
+    }
+
+    public async Task<ExecutionResult> DeleteTransaction(int userId, int transactionId)
+    {
+        var transaction = await transactionRepository.GetByIdAsync(transactionId);
+        if (transaction is null)
+        {
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.TransactionError, MessageCode.TransactionNotFound));
+        }
+        
+        var budget = await budgetRepository.GetByIdAsync(transaction.BudgetId);
+        if (budget is null)
+        {
+            //TODO Log critical - create logging service 
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.BudgetNotFound));
+        }
+        
+        var canPerformAction =
+            await IsUserAuthorizedToPerformActionOnBudget(userId, budget, TransactionActionEnum.Write);
+        
+        if (!canPerformAction)
+        {
+            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
+        }
+
+        transaction.IsDeleted = true;
+        transaction.UpdateDate = TimeService.Now;
+        await transactionRepository.UpdateAsync(transaction);
+        
+        return new ExecutionResult();
     }
 
     private async Task<bool> IsUserAuthorizedToPerformActionOnBudget(int userId, BudgetEntity budget,
