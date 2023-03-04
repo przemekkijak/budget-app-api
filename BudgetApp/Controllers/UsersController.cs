@@ -37,7 +37,7 @@ public class UsersController : ApiControllerBase
     {
         if (model.GrantType == "refresh_token")
         {
-            
+            //TODO
         }
         
         var user = ModelFactory.Create(model);
