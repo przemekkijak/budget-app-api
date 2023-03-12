@@ -1,9 +1,46 @@
 ﻿@page "/"
+@using BudgetApp.Domain.Models
+@using BudgetApp.Core.Interfaces.Services
+@using BudgetApp.Helpers
+@inject IBudgetService BudgetService
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div class="transactionContainer">
+     <RadzenDataGrid 
+         AllowFiltering="true" 
+         AllowColumnResize="true" 
+         AllowSorting="true" 
+         PageSize="10" 
+         AllowPaging="true"
+         Data="@transactions" 
+         TItem="TransactionModel">
+         <Columns>
+             <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"></RadzenDataGridColumn>
+             <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Amount"></RadzenDataGridColumn>
+             <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"></RadzenDataGridColumn>
+         </Columns>
+     </RadzenDataGrid>
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    List<TransactionModel> transactions = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity?.IsAuthenticated ?? false)
+        {
+            var defaultBudget = await BudgetService.GetDefault(authState.GetUserId());
+            if (defaultBudget.Success && defaultBudget.Value.Transactions.Any())
+            {
+                transactions = defaultBudget.Value.Transactions;
+            }
+        }
+    }
+}

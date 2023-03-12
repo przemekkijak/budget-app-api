@@ -9,5 +9,6 @@ public interface IUserService
     Task<ExecutionResult<LoginResultModel>> RegisterUser(User model);
     Task<ExecutionResult<LoginResultModel>> AuthenticateUser(User model);
     Task<ExecutionResult<UserModel>> GetProfile(int userId);
+    Task Logout();
 
 }

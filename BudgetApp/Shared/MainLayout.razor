@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using BudgetApp.Helpers
+@inherits LayoutComponentBase
 
 <PageTitle>BudgetApp</PageTitle>
 
@@ -9,8 +10,18 @@
 
     <main>
         <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <a href="/"> Hello, @context.GetUserEmail()</a>
+                    <a href="/logout">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="">Register</a>
+                    <a href="/login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
-
+        
         <article class="content px-4">
             @Body
         </article>

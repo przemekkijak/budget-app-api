@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Security.Claims;
 using BCrypt;
 using BudgetApp.Core.Interfaces.Services;
 using BudgetApp.Domain;
@@ -9,19 +7,22 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Models;
 using BudgetApp.Domain.Objects;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace BudgetApp.Core;
 
 public class UserService : IUserService
 {
-    private readonly AppSettings appSettings;
     private readonly IUserRepository userRepository;
+    private readonly IHttpContextAccessor httpContextAccessor;
 
-    public UserService(AppSettings appSettings, IUserRepository userRepository)
+    public UserService(IUserRepository userRepository,
+        IHttpContextAccessor httpContextAccessor)
     {
-        this.appSettings = appSettings;
         this.userRepository = userRepository;
+        this.httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ExecutionResult<UserModel>> GetProfile(int userId)
@@ -48,15 +49,13 @@ public class UserService : IUserService
             return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
         }
 
-        var token = CreateToken(userEntity);
-        return new ExecutionResult<LoginResultModel>()
-        {
-            Value = new LoginResultModel()
-            {
-                Token = token,
-                User = ModelFactory.Create(userEntity)
-            }
-        };
+        await AuthenticateUser(userEntity);
+        return new ExecutionResult<LoginResultModel>();
+    }
+
+    public async Task Logout()
+    {
+        await httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
     
     public async Task<ExecutionResult<LoginResultModel>> RegisterUser(User model)
@@ -71,18 +70,11 @@ public class UserService : IUserService
         };
 
         var createUser = await userRepository.CreateAsync(userEntity);
-        var token = CreateToken(createUser);
-        return new ExecutionResult<LoginResultModel>()
-        {
-            Value = new LoginResultModel()
-            {
-                Token = token,
-                User = ModelFactory.Create(userEntity) 
-            }
-        };
+        await AuthenticateUser(createUser);
+        return new ExecutionResult<LoginResultModel>() { };
     }
 
-    private string CreateToken(UserEntity user)
+    private async Task AuthenticateUser(UserEntity user)
     {
         var now = DateTime.Now;
         var userClaims = new List<Claim>
@@ -90,19 +82,13 @@ public class UserService : IUserService
             new(ClaimTypes.Email, user.Email),
             new(CustomClaimTypes.Id, user.Id.ToString()),
         };
-     
-        var tokenLifetime = TimeSpan.FromDays(1);
-        var jwt = new JwtSecurityToken(
-            issuer: appSettings.TokenIssuer,
-            audience: appSettings.TokenIssuer,
-            notBefore: now,
-            claims: userClaims,
-            expires: now.Add(tokenLifetime),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey)),
-                SecurityAlgorithms.HmacSha256Signature));
+        
+        var claimsIdentity = new ClaimsIdentity(
+            userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return new JwtSecurityTokenHandler().WriteToken(jwt);
+        var authProperties = new AuthenticationProperties();
+        await httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity), authProperties);
     }
     
     //TODO RefreshToken

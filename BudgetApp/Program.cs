@@ -1,16 +1,14 @@
-using System.Text;
 using BudgetApp.Core;
 using BudgetApp.Core.Interfaces.Services;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Mappings;
 using BudgetApp.Domain.Repositories;
+using BudgetApp.Middlewares;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +28,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<BlazorCookieLoginMiddleware>();
+
 
 app.UseStaticFiles();
 
@@ -57,6 +57,7 @@ void AddServices()
     builder.Services.AddAuthorization();
 
     //Base services
+    builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
@@ -116,20 +117,6 @@ void ConfigureDapper()
 void ConfigureAuth(AppSettings appSettings)
 {
     builder.Services
-        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuer = true,
-                ValidIssuer = appSettings.TokenIssuer,
-
-                ValidateAudience = true,
-                ValidAudience = appSettings.TokenIssuer,
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey))
-            };
-        });
+        .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie();
 }
