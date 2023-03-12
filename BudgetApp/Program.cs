@@ -20,7 +20,6 @@ AddServices();
 
 
 var app = builder.Build();
-app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
@@ -31,10 +30,21 @@ if (app.Environment.IsDevelopment())
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
 app.Run();
 
 void AddServices()
 {
+    //Blazor
+    builder.Services.AddRazorPages();
+    builder.Services.AddServerSideBlazor();
 
     //AppSettings
     var appSettingsSection = builder.Configuration.GetSection("AppSettings");
