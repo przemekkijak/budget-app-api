@@ -10,6 +10,7 @@ using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +89,11 @@ void AddServices()
     });
 
     //Services and repositories
+    builder.Services.AddScoped<DialogService>();
+    builder.Services.AddScoped<NotificationService>();
+    builder.Services.AddScoped<TooltipService>();
+    builder.Services.AddScoped<ContextMenuService>();
+    
     builder.Services.AddScoped<IBaseRepository, BaseRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();

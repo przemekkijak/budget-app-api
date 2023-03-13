@@ -27,11 +27,6 @@ public class TransactionService : ITransactionService
 
     public async Task<ExecutionResult> AddTransaction(int userId, AddTransactionModel model)
     {
-        if (model.Amount < decimal.Zero)
-        {
-            return new ExecutionResult(new ErrorInfo(ErrorCode.TransactionError, MessageCode.InvalidAmount));
-        }
-        
         var budget = await budgetRepository.GetByIdAsync(model.BudgetId);
         if (budget is null)
         {

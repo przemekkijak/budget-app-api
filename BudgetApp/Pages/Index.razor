@@ -2,34 +2,42 @@
 @using BudgetApp.Domain.Models
 @using BudgetApp.Core.Interfaces.Services
 @using BudgetApp.Helpers
+@using BudgetApp.Pages.Components
 @inject IBudgetService BudgetService
+@inject DialogService DialogService
 
 <PageTitle>Index</PageTitle>
 
 
 <div class="transactionContainer">
-     <RadzenDataGrid 
-         AllowFiltering="true" 
-         AllowColumnResize="true" 
-         AllowSorting="true" 
-         PageSize="10" 
-         AllowPaging="true"
-         Data="@transactions" 
-         TItem="TransactionModel">
-         <Columns>
-             <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"></RadzenDataGridColumn>
-             <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Amount"></RadzenDataGridColumn>
-             <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"></RadzenDataGridColumn>
-         </Columns>
-     </RadzenDataGrid>
+    <div class="buttonContainer">
+        <RadzenButton Shade="Shade.Darker" Click="@(_ => AddTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+    </div>
+    
+    <RadzenDataGrid
+        AllowFiltering="true"
+        AllowColumnResize="true"
+        AllowSorting="true"
+        PageSize="10"
+        AllowPaging="true"
+        Data="@Transactions"
+        TItem="TransactionModel">
+        <Columns>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Amount"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"></RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
 </div>
 
 @code {
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+    
+    public BudgetModel budget { get; set; }
 
-    List<TransactionModel> transactions = new();
+    public List<TransactionModel> Transactions { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,8 +47,23 @@
             var defaultBudget = await BudgetService.GetDefault(authState.GetUserId());
             if (defaultBudget.Success && defaultBudget.Value.Transactions.Any())
             {
-                transactions = defaultBudget.Value.Transactions;
+                budget = defaultBudget.Value;
+                Transactions = defaultBudget.Value.Transactions;
             }
         }
+    }
+
+    private async Task AddTransactionDialog()
+    {
+        var parameters = new Dictionary<string, object>()
+        {
+            { "BudgetId", budget.Id }
+        };
+
+        await DialogService.OpenAsync<TransactionForm>("Add transaction",
+            new Dictionary<string, object>()
+            {
+                { "BudgetId", 1 }
+            });
     }
 }

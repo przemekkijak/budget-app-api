@@ -1,0 +1,56 @@
+@using BudgetApp.Domain.Models
+@using BudgetApp.Core.Interfaces.Services
+@using BudgetApp.Infrastructure
+@inject ITransactionService TransactionService
+
+<RadzenTemplateForm TItem="AddTransactionModel" Data="@TransactionModel" Submit="@Submit">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6" style="width: 90%;">
+                <RadzenFieldset Text="Add transaction">
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Description"/>
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox style="width: 100%;" Name="Description" @bind-Value="TransactionModel.Description"/>
+                        </div>
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Amount"/>
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenNumeric TValue="decimal" Format="c" Name="Amount" @bind-Value="TransactionModel.Amount"/>
+                        </div>
+                    </div>
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Add" />
+                </RadzenFieldset>
+            </div>
+        </div>
+    </div>
+</RadzenTemplateForm>
+
+@code {
+    
+    [Parameter]
+    public int BudgetId { get; set; }
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    private AddTransactionModel TransactionModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TransactionModel = new AddTransactionModel()
+        {
+            BudgetId = BudgetId
+        };
+    }
+
+    private async Task Submit()
+    {
+        var authState = await AuthState;
+        var userId = authState.User.GetUserId();
+        await TransactionService.AddTransaction(userId, TransactionModel);
+    }
+}
