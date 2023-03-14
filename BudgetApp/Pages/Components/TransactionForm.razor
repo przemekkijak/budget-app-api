@@ -2,6 +2,7 @@
 @using BudgetApp.Core.Interfaces.Services
 @using BudgetApp.Infrastructure
 @inject ITransactionService TransactionService
+@inject DialogService DialogService
 
 <RadzenTemplateForm TItem="AddTransactionModel" Data="@TransactionModel" Submit="@Submit">
     <div class="container-fluid">
@@ -51,6 +52,7 @@
     {
         var authState = await AuthState;
         var userId = authState.User.GetUserId();
-        await TransactionService.AddTransaction(userId, TransactionModel);
+        var added = await TransactionService.AddTransaction(userId, TransactionModel);
+        DialogService.Close(added.Success);
     }
 }
