@@ -1,14 +1,15 @@
 @using BudgetApp.Domain.Models
 @using BudgetApp.Core.Interfaces.Services
+@using BudgetApp.Domain.Enums
 @using BudgetApp.Infrastructure
 @inject ITransactionService TransactionService
 @inject DialogService DialogService
 
-<RadzenTemplateForm TItem="AddTransactionModel" Data="@TransactionModel" Submit="@Submit">
+<RadzenTemplateForm TItem="TransactionModel" Data="@TransactionModel" Submit="@Submit">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-6" style="width: 90%;">
-                <RadzenFieldset Text="Add transaction">
+                <RadzenFieldset Text="Transaction">
                     <div class="row">
                         <div class="col-md-4 align-items-center d-flex">
                             <RadzenLabel Text="Description"/>
@@ -22,8 +23,14 @@
                         <div class="col-md-8">
                             <RadzenNumeric TValue="decimal" Format="c" Name="Amount" @bind-Value="TransactionModel.Amount"/>
                         </div>
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Status"/>
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenDropDown @bind-Value="TransactionModel.Status" Data="Enum.GetValues<TransactionStatusEnum>()"></RadzenDropDown>
+                        </div>
                     </div>
-                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Add" />
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
                 </RadzenFieldset>
             </div>
         </div>
@@ -38,12 +45,16 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
 
-    private AddTransactionModel TransactionModel { get; set; }
+    [Parameter]
+    public TransactionModel? Transaction { get; set; }
 
+    private TransactionModel TransactionModel { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
-        TransactionModel = new AddTransactionModel()
+        TransactionModel = Transaction ?? new TransactionModel()
         {
+            Id = int.MinValue,
             BudgetId = BudgetId
         };
     }
@@ -52,7 +63,7 @@
     {
         var authState = await AuthState;
         var userId = authState.User.GetUserId();
-        var added = await TransactionService.AddTransaction(userId, TransactionModel);
+        var added = await TransactionService.UpdateTransaction(userId, TransactionModel);
         DialogService.Close(added.Success);
     }
 }

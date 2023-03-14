@@ -5,3 +5,7 @@
 .buttonContainer {
     margin-bottom: 2%;
 }
+
+.rz-data-row:hover {
+    cursor: pointer;
+}

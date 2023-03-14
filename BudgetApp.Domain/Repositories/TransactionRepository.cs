@@ -10,9 +10,11 @@ public class TransactionRepository : BaseRepository<TransactionEntity>, ITransac
     {
     }
 
-    public async Task<List<TransactionEntity>> GetForBudget(int budgetId)
+    public async Task<List<TransactionEntity>> GetForBudget(int budgetId, DateTime? startDate = null, DateTime? endDate = null)
     {
         using var con = CreateConnection();
-        return (await con.SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId && a.IsDeleted == false)).ToList();
+        return (await con
+            .SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId && a.IsDeleted == false && a.CreateDate >= startDate && a.CreateDate <= endDate))
+            .ToList();
     }
 }

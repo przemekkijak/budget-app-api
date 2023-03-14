@@ -19,7 +19,7 @@ public class BudgetService : IBudgetService
         this.transactionService = transactionService;
     }
 
-    public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId)
+    public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId, bool currentMonthTransactionsOnly = false)
     {
         var budget = await budgetRepository.GetDefault(userId);
         if (budget is null)
@@ -29,7 +29,7 @@ public class BudgetService : IBudgetService
         }
         
         var budgetModel = ModelFactory.Create(budget);
-        budgetModel.Transactions =  await transactionService.GetTransactionsForBudget(budget.Id);
+        budgetModel.Transactions = await transactionService.GetTransactionsForBudget(budget.Id, currentMonthTransactionsOnly);
 
         return new ExecutionResult<BudgetModel>(budgetModel);
     }

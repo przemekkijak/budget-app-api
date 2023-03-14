@@ -28,7 +28,7 @@ public class TransactionServiceTests
             Id = 1
         };
 
-        var transaction = new AddTransactionModel()
+        var transaction = new TransactionModel()
         {
             Amount = 5,
             BudgetId = 1,

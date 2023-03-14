@@ -19,13 +19,23 @@ public class TransactionService : ITransactionService
         this.budgetRepository = budgetRepository;
     }
 
-    public async Task<List<TransactionModel>> GetTransactionsForBudget(int budgetId)
+    public async Task<List<TransactionModel>> GetTransactionsForBudget(int budgetId, bool currentMonthOnly = false)
     {
-        var entities = await transactionRepository.GetForBudget(budgetId);
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+
+        if (currentMonthOnly)
+        {
+            var now = TimeService.Now;
+            startDate = new DateTime(now.Year, now.Month, 1);
+            endDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
+        }
+
+        var entities = await transactionRepository.GetForBudget(budgetId, startDate, endDate);
         return entities.Select(ModelFactory.Create).ToList();
     }
 
-    public async Task<ExecutionResult> AddTransaction(int userId, AddTransactionModel model)
+    public async Task<ExecutionResult> AddTransaction(int userId, TransactionModel model)
     {
         var budget = await budgetRepository.GetByIdAsync(model.BudgetId);
         if (budget is null)
@@ -46,7 +56,7 @@ public class TransactionService : ITransactionService
             BudgetId = model.BudgetId,
             Amount = model.Amount,
             UserId = userId,
-            Status = model.StatusEnum,
+            Status = model.Status,
             Description = model.Description,
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now,
@@ -57,12 +67,12 @@ public class TransactionService : ITransactionService
         return new ExecutionResult();
     }
 
-    public async Task<ExecutionResult<bool>> UpdateTransaction(int userId, int transactionId, AddTransactionModel model)
+    public async Task<ExecutionResult> UpdateTransaction(int userId, TransactionModel model)
     {
-        var transaction = await transactionRepository.GetByIdAsync(transactionId);
+        var transaction = await transactionRepository.GetByIdAsync(model.Id);
         if (transaction is null)
         {
-            return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.TransactionError, MessageCode.TransactionNotFound));
+            return await AddTransaction(userId, model);
         }
 
         var budget = await budgetRepository.GetByIdAsync(transaction.BudgetId);
@@ -81,7 +91,7 @@ public class TransactionService : ITransactionService
         }
 
         transaction.Amount = model.Amount;
-        transaction.Status = model.StatusEnum;
+        transaction.Status = model.Status;
         transaction.UpdateDate = TimeService.Now;
 
         var update = await transactionRepository.UpdateAsync(transaction);

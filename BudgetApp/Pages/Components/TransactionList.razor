@@ -7,7 +7,7 @@
 
 <div class="transactionContainer">
     <div class="buttonContainer">
-        <RadzenButton Shade="Shade.Darker" Click="@(_ => AddTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+        <RadzenButton Shade="Shade.Darker" Click="@(_ => ManageTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
     </div>
     
     <RadzenDataGrid
@@ -17,11 +17,13 @@
         PageSize="10"
         AllowPaging="true"
         Data="@Transactions"
-        TItem="TransactionModel">
+        TItem="TransactionModel"
+        RowClick="(e) => ManageTransactionDialog(e.Data)">
         <Columns>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"></RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Amount"></RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Status" Title="Status"/>
         </Columns>
     </RadzenDataGrid>
 </div>
@@ -45,7 +47,7 @@
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            var defaultBudget = await BudgetService.GetDefault(authState.GetUserId());
+            var defaultBudget = await BudgetService.GetDefault(authState.GetUserId(), true);
             if (defaultBudget.Success && defaultBudget.Value.Transactions.Any())
             {
                 budget = defaultBudget.Value;
@@ -54,18 +56,26 @@
         }
     }
 
-    private async Task AddTransactionDialog()
+    private async Task ManageTransactionDialog(TransactionModel? transaction = null)
     {
         var parameters = new Dictionary<string, object>()
         {
             { "BudgetId", budget.Id }
         };
 
-        bool isTransactionAdded = await DialogService.OpenAsync<TransactionForm>("Add transaction", parameters);
-        if (isTransactionAdded)
+        if (transaction is not null)
+        {
+            parameters.Add("Transaction", transaction);
+        }
+
+        var dialogTitle = transaction is null ? "Add transaction" : "Modify transaction";
+
+        bool? isTransactionAdded = await DialogService.OpenAsync<TransactionForm>(dialogTitle, parameters);
+        if (isTransactionAdded ?? false)
         {
             await GetTransactions();
         }
     }
+    
     
 }
