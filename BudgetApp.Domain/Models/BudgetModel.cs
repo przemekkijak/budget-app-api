@@ -10,5 +10,7 @@ public class BudgetModel
 
     public bool IsDefault { get; set; }
 
-    public List<TransactionModel> Transactions { get; set; }
+    public decimal Amount { get; set; }
+
+    public List<TransactionModel>? Transactions { get; set; }
 }

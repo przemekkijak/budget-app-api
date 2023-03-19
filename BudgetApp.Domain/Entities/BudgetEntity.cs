@@ -8,5 +8,7 @@ public class BudgetEntity : EntityBase
 
     public bool IsDefault { get; set; }
 
+    public decimal Amount { get; set; }
+
     public IList<TransactionEntity> Transactions { get; set; }
 }
