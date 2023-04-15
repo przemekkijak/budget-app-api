@@ -1,7 +1,9 @@
 @using BudgetApp.Core
 @using BudgetApp.Core.Interfaces.Services
+@using BudgetApp.Domain.Enums
 @using BudgetApp.Domain.Models
 @using BudgetApp.Helpers
+@using System.Transactions
 @inject IBudgetService BudgetService
 @inject DialogService DialogService
 
@@ -21,11 +23,24 @@
         RowClick="(e) => TransactionDialog(e.Data)">
         <Columns>
             <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"/>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount">
+                <Template Context="transaction">
+                    <span class="@GetAmountCellStyle(transaction.Amount)">
+                        @transaction.AmountText
+                    </span>
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description"/>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="Status" Title="Status"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Status" Title="Status">
+                <Template Context="transaction">
+                    <span class="@GetStatusCellStyle(transaction.Status)">
+                        @transaction.Status
+                    </span>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
+    
 </div>
 
 @code {
@@ -81,5 +96,21 @@
         }
     }
     
-    
+    private string GetStatusCellStyle(TransactionStatusEnum status)
+    {
+        return status switch
+        {
+            TransactionStatusEnum.New => "new-status",
+            TransactionStatusEnum.Completed => "completed-status",
+            TransactionStatusEnum.Scheduled => "scheduled-status",
+            _ => string.Empty
+            };
+    }
+
+    private string GetAmountCellStyle(decimal amount)
+    {
+        return amount > 0
+            ? "green-font"
+            : "red-font";
+    }
 }
