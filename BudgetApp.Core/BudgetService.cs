@@ -22,9 +22,21 @@ public class BudgetService : IBudgetService
         this.bankAccountService = bankAccountService;
     }
 
-    public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId, bool currentMonthTransactionsOnly = false)
+    public async Task<ExecutionResult<int>> GetDefaultBudgetId(int userId)
     {
         var budget = await budgetRepository.GetDefault(userId);
+        if (budget is null)
+        {
+            //TODO handle error
+            return new ExecutionResult<int>();
+        }
+
+        return new ExecutionResult<int>(budget.Id);
+    }
+
+    public async Task<ExecutionResult<BudgetModel>> GetBudget(int budgetId, bool currentMonthTransactionsOnly = false)
+    {
+        var budget = await budgetRepository.GetByIdAsync(budgetId);
         if (budget is null)
         {
             //TODO handle error

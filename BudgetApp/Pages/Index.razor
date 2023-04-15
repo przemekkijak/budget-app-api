@@ -1,9 +1,44 @@
 ﻿@page "/"
 @using BudgetApp.Pages.Components
+@using BudgetApp.Core.Interfaces.Services
+@using BudgetApp.Helpers
+@inject IBudgetService BudgetService
 
 <PageTitle>Dashboard</PageTitle>
-<TransactionList/>
+
+<div class="container">
+    @if (SelectedBudgetId.HasValue)
+    {
+        <div class="row">
+            <div class="col-4 mb-4">
+                <BankAccountsSummary BudgetId="SelectedBudgetId!.Value"></BankAccountsSummary>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <TransactionList BudgetId="SelectedBudgetId!.Value"/>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
 
+    private int? SelectedBudgetId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity?.IsAuthenticated ?? false)
+        {
+            var defaultBudgetId = await BudgetService.GetDefaultBudgetId(authState.GetUserId());
+            if (defaultBudgetId.Success)
+            {
+                SelectedBudgetId = defaultBudgetId.Value;
+            }
+        }
+    }
+    
 }

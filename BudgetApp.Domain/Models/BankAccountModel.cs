@@ -13,4 +13,6 @@ public class BankAccountModel
     public int NumberSuffix { get; set; }
 
     public bool IsDefault { get; set; }
+
+    public decimal Amount { get; set; }
 }

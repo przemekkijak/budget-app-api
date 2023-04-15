@@ -46,10 +46,10 @@
 @code {
     
     [Parameter]
-    public int BudgetId { get; set; }
+    public int BudgetId { get; init; }
 
     [CascadingParameter]
-    public Task<AuthenticationState> AuthState { get; set; }
+    public Task<AuthenticationState> AuthState { get; init; }
 
     [Parameter]
     public TransactionModel? Transaction { get; set; }

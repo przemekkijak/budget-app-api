@@ -100,6 +100,13 @@ public class TransactionService : ITransactionService
             return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
 
+        //We need to restore account amount, as transaction is not completed anymore
+        if (transaction.Status == TransactionStatusEnum.Completed && model.Status != TransactionStatusEnum.Completed)
+        {
+            var reversedAmount = transaction.Amount * -1;
+            await bankAccountService.UpdateAccountAmount(transaction.BankAccountId, reversedAmount);
+        }
+
         transaction.Amount = model.Amount;
         transaction.Status = model.Status;
         transaction.BankAccountId = model.BankAccountId;

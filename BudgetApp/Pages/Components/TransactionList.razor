@@ -33,6 +33,9 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
 
+    [Parameter]
+    public int BudgetId { get; set; }
+
     private BudgetModel budget { get; set; }
 
     private List<TransactionModel> Transactions { get; set; }
@@ -47,7 +50,7 @@
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            var defaultBudget = await BudgetService.GetDefault(authState.GetUserId(), true);
+            var defaultBudget = await BudgetService.GetBudget(BudgetId, true);
             if (defaultBudget.Success)
             {
                 budget = defaultBudget.Value;

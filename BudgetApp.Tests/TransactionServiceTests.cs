@@ -1,4 +1,5 @@
 using BudgetApp.Core;
+using BudgetApp.Core.Interfaces.Services;
 using BudgetApp.Domain.Common;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
@@ -15,7 +16,9 @@ public class TransactionServiceTests
         //Arrange
         var transactionRepository = Substitute.For<ITransactionRepository>();
         var budgetRepository = Substitute.For<IBudgetRepository>();
-        var transactionService = new TransactionService(transactionRepository, budgetRepository);
+        var bankAccountService = Substitute.For<IBankAccountService>();
+        
+        var transactionService = new TransactionService(transactionRepository, budgetRepository, bankAccountService);
 
         var budget = new BudgetEntity
         {

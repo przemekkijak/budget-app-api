@@ -77,7 +77,8 @@ public class ModelFactory
             UserId = entity.UserId,
             Name = entity.Name,
             NumberSuffix = entity.NumberSuffix,
-            IsDefault = entity.IsDefault
+            IsDefault = entity.IsDefault,
+            Amount = entity.Amount
         };
     }
 }
