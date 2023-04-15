@@ -18,4 +18,10 @@ public class BankAccountService : IBankAccountService
         var accountEntities = await bankAccountRepository.GetForBudget(budgetId);
         return accountEntities.Select(ModelFactory.Create).ToList();
     }
+
+    public async Task UpdateAccountAmount(int bankAccountId, decimal amount)
+    {
+        //TODO I might need logs for that 
+        await bankAccountRepository.UpdateAccountAmount(bankAccountId, amount);
+    }
 }

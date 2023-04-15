@@ -12,11 +12,15 @@ public class TransactionService : ITransactionService
 {
     private readonly ITransactionRepository transactionRepository;
     private readonly IBudgetRepository budgetRepository;
+    private readonly IBankAccountService bankAccountService;
 
-    public TransactionService(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository)
+    public TransactionService(ITransactionRepository transactionRepository, 
+        IBudgetRepository budgetRepository,
+        IBankAccountService bankAccountService)
     {
         this.transactionRepository = transactionRepository;
         this.budgetRepository = budgetRepository;
+        this.bankAccountService = bankAccountService;
     }
 
     public async Task<List<TransactionModel>> GetForBudget(int budgetId, bool currentMonthOnly = false)
@@ -60,10 +64,16 @@ public class TransactionService : ITransactionService
             Description = model.Description,
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now,
-            IsDeleted = false
+            IsDeleted = false,
+            BankAccountId = model.BankAccountId
         };
 
         await transactionRepository.CreateAsync(transactionEntity);
+        if (transactionEntity.Status == TransactionStatusEnum.Completed)
+        {
+            await bankAccountService.UpdateAccountAmount(transactionEntity.BankAccountId, transactionEntity.Amount);
+        }
+        
         return new ExecutionResult();
     }
 
@@ -95,8 +105,15 @@ public class TransactionService : ITransactionService
         transaction.BankAccountId = model.BankAccountId;
         transaction.UpdateDate = TimeService.Now;
 
+        
         var update = await transactionRepository.UpdateAsync(transaction);
-        //TODO what if false? Handle and log error 
+        
+        if (transaction.Status == TransactionStatusEnum.Completed)
+        {
+            await bankAccountService.UpdateAccountAmount(transaction.BankAccountId, transaction.Amount);
+        }
+        //TODO what if false? Handle and log error, those two operations should be done in transaction (for later) 
+        
         return new ExecutionResult<bool>(update);
     }
 
