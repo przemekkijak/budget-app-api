@@ -61,7 +61,7 @@ public class UserService : IUserService
     public async Task<ExecutionResult<LoginResultModel>> RegisterUser(User model)
     {
         var salt = BCryptHelper.GenerateSalt();
-        var userEntity = new UserEntity()
+        var userEntity = new UserEntity
         {
             Email = model.Email,
             PasswordHash = BCryptHelper.HashPassword(model.Password, salt),
@@ -71,7 +71,7 @@ public class UserService : IUserService
 
         var createUser = await userRepository.CreateAsync(userEntity);
         await AuthenticateUser(createUser);
-        return new ExecutionResult<LoginResultModel>() { };
+        return new ExecutionResult<LoginResultModel> { };
     }
 
     private async Task AuthenticateUser(UserEntity user)

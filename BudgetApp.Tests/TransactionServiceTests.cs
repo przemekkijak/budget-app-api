@@ -17,18 +17,18 @@ public class TransactionServiceTests
         var budgetRepository = Substitute.For<IBudgetRepository>();
         var transactionService = new TransactionService(transactionRepository, budgetRepository);
 
-        var budget = new BudgetEntity()
+        var budget = new BudgetEntity
         {
             Id = 1,
             UserId = 2
         };
 
-        var user = new UserEntity()
+        var user = new UserEntity
         {
             Id = 1
         };
 
-        var transaction = new TransactionModel()
+        var transaction = new TransactionModel
         {
             Amount = 5,
             BudgetId = 1,

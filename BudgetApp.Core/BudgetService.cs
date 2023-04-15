@@ -11,12 +11,15 @@ public class BudgetService : IBudgetService
 {
     private readonly IBudgetRepository budgetRepository;
     private readonly ITransactionService transactionService;
+    private readonly IBankAccountService bankAccountService;
 
     public BudgetService(IBudgetRepository budgetRepository,
-        ITransactionService transactionService)
+        ITransactionService transactionService,
+        IBankAccountService bankAccountService)
     {
         this.budgetRepository = budgetRepository;
         this.transactionService = transactionService;
+        this.bankAccountService = bankAccountService;
     }
 
     public async Task<ExecutionResult<BudgetModel>> GetDefault(int userId, bool currentMonthTransactionsOnly = false)
@@ -29,7 +32,10 @@ public class BudgetService : IBudgetService
         }
         
         var budgetModel = ModelFactory.Create(budget);
-        budgetModel.Transactions = await transactionService.GetTransactionsForBudget(budget.Id, currentMonthTransactionsOnly);
+        
+        //TODO Refactor way of getting additional entities
+        budgetModel.Transactions = await transactionService.GetForBudget(budget.Id, currentMonthTransactionsOnly);
+        budgetModel.BankAccounts = await bankAccountService.GetForBudget(budget.Id);
 
         return new ExecutionResult<BudgetModel>(budgetModel);
     }
@@ -43,7 +49,7 @@ public class BudgetService : IBudgetService
                 MessageCode.BudgetAlreadyExists));
         }
         
-        var entity = new BudgetEntity()
+        var entity = new BudgetEntity
         {
             Name = budget.Name,
             UserId = userId,

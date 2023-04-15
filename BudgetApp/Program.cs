@@ -63,7 +63,7 @@ void AddServices()
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
-        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Description = "Example: \"Authorization: Bearer {token}\"",
             Name = "Authorization",
@@ -98,12 +98,12 @@ void AddServices()
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
     builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+    builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 
     builder.Services.AddScoped<IUserService, UserService>();
     builder.Services.AddScoped<ITransactionService, TransactionService>();
     builder.Services.AddScoped<IBudgetService, BudgetService>();
-
-
+    builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 }
 
 void ConfigureDapper()
@@ -115,6 +115,7 @@ void ConfigureDapper()
         c.AddMap(new UserMap());
         c.AddMap(new BudgetMap());
         c.AddMap(new TransactionMap());
+        c.AddMap(new BankAccountMap());
         c.ForDommel();
     });
  

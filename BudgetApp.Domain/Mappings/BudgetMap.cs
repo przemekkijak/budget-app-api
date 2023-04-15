@@ -15,6 +15,5 @@ public class BudgetMap : DommelEntityMap<BudgetEntity>
         Map(x => x.IsDefault).ToColumn("is_default");
         Map(x => x.CreateDate).ToColumn("create_date");
         Map(x => x.UpdateDate).ToColumn("update_date");
-        Map(x => x.Amount).ToColumn("amount");
     }
 }

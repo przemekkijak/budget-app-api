@@ -8,6 +8,8 @@ public class TransactionModel
     
     public int BudgetId { get; init; }
 
+    public int BankAccountId { get; set; }
+
     public decimal Amount { get; set; }
 
     public string AmountText => $"{Amount} zł";

@@ -19,7 +19,7 @@ public class TransactionService : ITransactionService
         this.budgetRepository = budgetRepository;
     }
 
-    public async Task<List<TransactionModel>> GetTransactionsForBudget(int budgetId, bool currentMonthOnly = false)
+    public async Task<List<TransactionModel>> GetForBudget(int budgetId, bool currentMonthOnly = false)
     {
         DateTime? startDate = null;
         DateTime? endDate = null;
@@ -51,7 +51,7 @@ public class TransactionService : ITransactionService
             return new ExecutionResult(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
 
-        var transactionEntity = new TransactionEntity()
+        var transactionEntity = new TransactionEntity
         {
             BudgetId = model.BudgetId,
             Amount = model.Amount,
@@ -92,6 +92,7 @@ public class TransactionService : ITransactionService
 
         transaction.Amount = model.Amount;
         transaction.Status = model.Status;
+        transaction.BankAccountId = model.BankAccountId;
         transaction.UpdateDate = TimeService.Now;
 
         var update = await transactionRepository.UpdateAsync(transaction);

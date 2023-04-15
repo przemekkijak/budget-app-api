@@ -7,7 +7,7 @@
 
 <div class="transactionContainer">
     <div class="buttonContainer">
-        <RadzenButton Shade="Shade.Darker" Click="@(_ => ManageTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+        <RadzenButton Shade="Shade.Darker" Click="@(_ => TransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
     </div>
     
     <RadzenDataGrid
@@ -18,7 +18,7 @@
         AllowPaging="true"
         Data="@Transactions"
         TItem="TransactionModel"
-        RowClick="(e) => ManageTransactionDialog(e.Data)">
+        RowClick="(e) => TransactionDialog(e.Data)">
         <Columns>
             <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"/>
             <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount"/>
@@ -48,7 +48,7 @@
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
             var defaultBudget = await BudgetService.GetDefault(authState.GetUserId(), true);
-            if (defaultBudget.Success && defaultBudget.Value.Transactions.Any())
+            if (defaultBudget.Success)
             {
                 budget = defaultBudget.Value;
                 Transactions = defaultBudget.Value.Transactions;
@@ -56,11 +56,12 @@
         }
     }
 
-    private async Task ManageTransactionDialog(TransactionModel? transaction = null)
+    private async Task TransactionDialog(TransactionModel? transaction = null)
     {
-        var parameters = new Dictionary<string, object>()
+        var parameters = new Dictionary<string, object>
         {
-            { "BudgetId", budget.Id }
+            { "BudgetId", budget.Id },
+            { "BankAccounts", budget.BankAccounts}
         };
 
         if (transaction is not null)

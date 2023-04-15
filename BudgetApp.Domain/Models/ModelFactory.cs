@@ -10,7 +10,7 @@ public class ModelFactory
         if (loginResult is null)
             return new LoginResultModel();
         
-        return new LoginResultModel()
+        return new LoginResultModel
         {
             Token = loginResult.Token,
             RefreshToken = loginResult.RefreshToken,
@@ -23,7 +23,7 @@ public class ModelFactory
         if (entity is null)
             return new UserModel();
         
-        return new UserModel()
+        return new UserModel
         {
             Id = entity.Id,
             Email = entity.Email,
@@ -34,7 +34,7 @@ public class ModelFactory
 
     public static User Create(RegistrationModel model)
     {
-        return new User()
+        return new User
         {
             Email = model.Email,
             Password = model.Password
@@ -43,7 +43,7 @@ public class ModelFactory
 
     public static BudgetModel Create(BudgetEntity entity)
     {
-        return new BudgetModel()
+        return new BudgetModel
         {
             Id = entity.Id,
             Name = entity.Name,
@@ -54,7 +54,7 @@ public class ModelFactory
 
     public static TransactionModel Create(TransactionEntity entity)
     {
-        return new TransactionModel()
+        return new TransactionModel
         {
             Id = entity.Id,
             BudgetId = entity.BudgetId,
@@ -63,7 +63,21 @@ public class ModelFactory
             UserId = entity.UserId,
             Description = entity.Description,
             CreateDate = entity.CreateDate,
-            UpdateDate = entity.UpdateDate
+            UpdateDate = entity.UpdateDate,
+            BankAccountId = entity.BankAccountId
+        };
+    }
+
+    public static BankAccountModel Create(BankAccountEntity entity)
+    {
+        return new BankAccountModel
+        {
+            Id = entity.Id,
+            BudgetId = entity.BudgetId,
+            UserId = entity.UserId,
+            Name = entity.Name,
+            NumberSuffix = entity.NumberSuffix,
+            IsDefault = entity.IsDefault
         };
     }
 }
