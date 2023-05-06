@@ -1,8 +1,7 @@
-@using BudgetApp.Domain.Models
-@using BudgetApp.Core.Interfaces.Services
 @using BudgetApp.Domain.Enums
 @using BudgetApp.Infrastructure
-@inject ITransactionService TransactionService
+@using BudgetApp.Core.Features.Transactions.Models
+@using BudgetApp.Core.Features.BankAccounts.Models
 @inject DialogService DialogService
 
 <RadzenTemplateForm TItem="TransactionModel" Data="@TransactionModel" Submit="@Submit">
@@ -73,7 +72,7 @@
     {
         var authState = await AuthState;
         var userId = authState.User.GetUserId();
-        var added = await TransactionService.UpdateTransaction(userId, TransactionModel);
-        DialogService.Close(added.Success);
+        // var added = await TransactionService.UpdateTransaction(userId, TransactionModel);
+        // DialogService.Close(added.Success);
     }
 }

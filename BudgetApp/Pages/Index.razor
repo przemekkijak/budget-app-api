@@ -1,8 +1,5 @@
 ﻿@page "/"
 @using BudgetApp.Pages.Components
-@using BudgetApp.Core.Interfaces.Services
-@using BudgetApp.Helpers
-@inject IBudgetService BudgetService
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -16,7 +13,7 @@
         </div>
         <div class="row">
             <div>
-                <TransactionList BudgetId="SelectedBudgetId!.Value"/>
+                <TransactionList BudgetId="SelectedBudgetId"/>
             </div>
         </div>
     }
@@ -33,11 +30,7 @@
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            var defaultBudgetId = await BudgetService.GetDefaultBudgetId(authState.GetUserId());
-            if (defaultBudgetId.Success)
-            {
-                SelectedBudgetId = defaultBudgetId.Value;
-            }
+
         }
     }
     

@@ -1,6 +1,4 @@
-@using BudgetApp.Core.Interfaces.Services
-@using BudgetApp.Domain.Models
-@inject IBankAccountService BankAccountService
+@using BudgetApp.Core.Features.BankAccounts.Models
 
 <div>
     @if (BankAccounts.Any())
@@ -41,6 +39,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        BankAccounts = await BankAccountService.GetForBudget(BudgetId);
+        // BankAccounts = await BankAccountService.GetForBudget(BudgetId);
     }
 }

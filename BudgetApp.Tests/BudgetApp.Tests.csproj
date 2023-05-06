@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BudgetApp.Core\BudgetApp.Core.csproj" />
+      <ProjectReference Include="..\BudgetApp.Application\BudgetApp.Application.csproj" />
     </ItemGroup>
 
 </Project>

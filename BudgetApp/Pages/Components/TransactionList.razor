@@ -1,11 +1,15 @@
 @using BudgetApp.Core
-@using BudgetApp.Core.Interfaces.Services
 @using BudgetApp.Domain.Enums
-@using BudgetApp.Domain.Models
 @using BudgetApp.Helpers
 @using System.Transactions
-@inject IBudgetService BudgetService
+@using BudgetApp.Core.Features.Budgets.Models
+@using BudgetApp.Core.Features.Budgets.Queries
+@using BudgetApp.Core.Features.Transactions.Models
+@using BudgetApp.Core.Features.Transactions.Queries
+@using BudgetApp.Infrastructure
+@using MediatR
 @inject DialogService DialogService
+@inject IMediator Mediator
 
 <div class="transactionContainer">
     <div class="buttonContainer">
@@ -49,7 +53,7 @@
     public Task<AuthenticationState> AuthState { get; set; }
 
     [Parameter]
-    public int BudgetId { get; set; }
+    public int? BudgetId { get; set; }
 
     private BudgetModel budget { get; set; }
 
@@ -65,11 +69,23 @@
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            var defaultBudget = await BudgetService.GetBudget(BudgetId, true);
+            var defaultBudget = await Mediator.Send(new GetBudgetCommand()
+            {
+                BudgetId = BudgetId,
+                UserId = authState.User.GetUserId()
+            });
+            
             if (defaultBudget.Success)
             {
                 budget = defaultBudget.Value;
-                Transactions = defaultBudget.Value.Transactions;
+
+                var transactions = await Mediator.Send(new GetTransactionsForBudgetCommand()
+                {
+                    BudgetId = defaultBudget.Value.Id,
+                    CurrentMonthOnly = false
+                });
+
+                Transactions = transactions;
             }
         }
     }

@@ -1,13 +1,16 @@
-using BudgetApp.Core;
-using BudgetApp.Core.Interfaces.Services;
+using AutoMapper;
+using BudgetApp.Core.Features.Transactions.Models;
+using BudgetApp.Core.Features.Users.Models;
 using BudgetApp.Domain;
+using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.EntityMappings;
 using BudgetApp.Domain.Interfaces.Repositories;
-using BudgetApp.Domain.Mappings;
 using BudgetApp.Domain.Repositories;
 using BudgetApp.Middlewares;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 using Radzen;
@@ -16,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureDapper();
 AddServices();
-
 
 var app = builder.Build();
 
@@ -30,7 +32,6 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<BlazorCookieLoginMiddleware>();
-
 
 app.UseStaticFiles();
 
@@ -87,6 +88,15 @@ void AddServices()
             }
         });
     });
+    
+    //AutoMapper
+    var config = new MapperConfiguration(cfg => {
+        cfg.CreateMap<TransactionEntity, TransactionModel>();
+        cfg.CreateMap<UserEntity, UserModel>();
+    });
+
+    var mapper = config.CreateMapper();
+    builder.Services.AddSingleton(mapper);
 
     //Services and repositories
     builder.Services.AddScoped<DialogService>();
@@ -99,11 +109,10 @@ void AddServices()
     builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
     builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
     builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+    
 
-    builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<ITransactionService, TransactionService>();
-    builder.Services.AddScoped<IBudgetService, BudgetService>();
-    builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+    builder.Services.AddTransient<IMediator, Mediator>();
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 }
 
 void ConfigureDapper()
