@@ -23,4 +23,8 @@
       <ProjectReference Include="..\BudgetApp.Application\BudgetApp.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Components\BankAccounts\BankAccountsSummary.razor" />
+    </ItemGroup>
+
 </Project>

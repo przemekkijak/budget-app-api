@@ -5,14 +5,15 @@
 @using BudgetApp.Core.Features.Transactions.Models
 @using BudgetApp.Core.Features.Transactions.Queries
 @using BudgetApp.Domain.Enums
-@using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Features.BankAccounts.Queries
+@using BudgetApp.Pages.Components.Imports
 @inject DialogService DialogService
 @inject IMediator Mediator
 
 <div class="transactionContainer">
     <div class="buttonContainer">
-        <RadzenButton Shade="Shade.Darker" Click="@(_ => TransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+        <RadzenButton Shade="Shade.Dark" Click="@(_ => OpenTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+        <RadzenButton Shade="Shade.Darker" Click="@(_ => OpenImportFileDialog())" Text="Import" ButtonStyle="ButtonStyle.Secondary"/>
     </div>
     
     <RadzenDataGrid
@@ -23,9 +24,9 @@
         AllowPaging="true"
         Data="@Transactions"
         TItem="TransactionModel"
-        RowClick="e => TransactionDialog(e.Data)">
+        RowClick="e => OpenTransactionDialog(e.Data)">
         <Columns>
-            <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"/>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date" SortOrder="SortOrder.Descending"/>
             <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount">
                 <Template Context="transaction">
                     <span class="@GetAmountCellStyle(transaction.Amount)">
@@ -54,6 +55,8 @@
 
     [Parameter]
     public int? BudgetId { get; set; }
+    
+    RadzenUpload RadzenUpload;
 
     private BudgetModel budget { get; set; }
 
@@ -91,7 +94,7 @@
         }
     }
 
-    private async Task TransactionDialog(TransactionModel? transaction = null)
+    private async Task OpenTransactionDialog(TransactionModel? transaction = null)
     {
         var bankAccounts = await Mediator.Send(new GetBankAccountsForBudget() { BudgetId = budget.Id });
         
@@ -114,7 +117,12 @@
             await GetTransactions();
         }
     }
-    
+
+    private async Task OpenImportFileDialog()
+    {
+        await DialogService.OpenAsync<ImportTransactionsForm>("Import Transactions");
+    }
+
     private string GetStatusCellStyle(TransactionStatusEnum status)
     {
         return status switch
