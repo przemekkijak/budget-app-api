@@ -7,4 +7,5 @@ public class ImportedTransactionScheme
     public int DescriptionIndex { get; set; }
 
     public int AmountIndex { get; set; }
+    
 }

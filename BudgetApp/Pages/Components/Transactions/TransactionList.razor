@@ -10,6 +10,7 @@
 @using CsvHelper
 @using System.Dynamic
 @using System.Globalization
+@using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Services
 @using BudgetApp.Helpers
 @using BudgetApp.Pages.Components.Imports
@@ -159,10 +160,13 @@
         var importedTransactions = await CsvService.GetRecordsFromCsvFile(e.File);
 
         var user = await AuthState;
+        var bankAccounts = await Mediator.Send(new GetBankAccountsForBudget() { BudgetId = budget.Id });
+
         var formParameters = new Dictionary<string, object>()
         {
-            {"BudgetId", BudgetId!.Value},
-            {"UserId", user.GetUserId()},
+            { "BudgetId", BudgetId!.Value },
+            { "UserId", user.GetUserId() },
+            { "BankAccounts", bankAccounts},
             { "Transactions", importedTransactions }
         };
         

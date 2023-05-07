@@ -1,8 +1,10 @@
 @using System.Dynamic
+@using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Features.Transactions.Commands
 @using BudgetApp.Core.Features.Transactions.Models
 @using MediatR
 @inject IMediator Mediator
+@inject DialogService DialogService
 
 @if (showForm)
 {
@@ -30,6 +32,12 @@
             <div class="col-md-8">
                 <RadzenDropDown @bind-Value="TransactionScheme.AmountIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
             </div>
+            <div class="col-md-4 align-items-center d-flex">
+                <RadzenLabel Text="Bank account"/>
+            </div>
+            <div class="col-md-8">
+                <RadzenDropDown @bind-Value="SelectedBankAccountId" Data="@BankAccounts" TextProperty="Name" ValueProperty="Id"/>
+            </div>
             <br/>
             <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save"/>
         </div>
@@ -47,7 +55,12 @@
     public int UserId { get; set; }
 
     [Parameter]
+    public List<BankAccountModel> BankAccounts { get; set; }
+
+    [Parameter]
     public List<ExpandoObject> Transactions { get; set; }
+
+    public int SelectedBankAccountId { get; set; }
 
     private Dictionary<int, string> AvailableValues { get; } = new();
 
@@ -83,8 +96,11 @@
             BudgetId = BudgetId,
             UserId = UserId,
             ImportedTransactionScheme = TransactionScheme,
-            Transactions = Transactions
+            Transactions = Transactions,
+            BankAccountId = SelectedBankAccountId
         });
+
+        DialogService.Close();
     }
 
     private void PrepareRequiredValues()
