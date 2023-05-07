@@ -35,7 +35,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
 
         var createUser = await userRepository.CreateAsync(userEntity);
 
-        await mediator.Send(new SignUserTokenCommand()
+        await mediator.Send(new SignUserTokenCommand
         {
             UserEntity = createUser
         }, cancellationToken);

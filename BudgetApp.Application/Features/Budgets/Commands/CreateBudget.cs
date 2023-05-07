@@ -6,23 +6,32 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Budgets.Commands;
 
-public class CreateBudgetCommand : IRequest<ExecutionResult>
+public class CreateBudget : IRequest<ExecutionResult>
 {
     public int UserId { get; init; }
-    public BudgetModel Budget { get; init; }
+    public BudgetModel? Budget { get; set; }
 }
 
-public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, ExecutionResult>
+public class CreateBudgetHandler : IRequestHandler<CreateBudget, ExecutionResult>
 {
     private readonly IBudgetRepository budgetRepository;
 
-    public CreateBudgetCommandHandler(IBudgetRepository budgetRepository)
+    private const string DefaultBudgetName = "Default";
+
+    public CreateBudgetHandler(IBudgetRepository budgetRepository)
     {
         this.budgetRepository = budgetRepository;
     }
     
-    public async Task<ExecutionResult> Handle(CreateBudgetCommand request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult> Handle(CreateBudget request, CancellationToken cancellationToken)
     {
+        request.Budget ??= new BudgetModel()
+        {
+            Name = DefaultBudgetName,
+            IsDefault = true,
+            UserId = request.UserId
+        };
+        
         var existing = await budgetRepository.GetByName(request.UserId, request.Budget.Name);
         if (existing != null)
         {

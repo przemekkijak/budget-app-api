@@ -1,4 +1,6 @@
 using AutoMapper;
+using BudgetApp.Core.Features.BankAccounts.Models;
+using BudgetApp.Core.Features.Budgets.Models;
 using BudgetApp.Core.Features.Transactions.Models;
 using BudgetApp.Core.Features.Users.Models;
 using BudgetApp.Domain;
@@ -55,7 +57,7 @@ void AddServices()
     builder.Services.AddSingleton(appSettings);
     
     //Auth
-    ConfigureAuth(appSettings);
+    ConfigureAuth();
     builder.Services.AddAuthorization();
 
     //Base services
@@ -90,12 +92,7 @@ void AddServices()
     });
     
     //AutoMapper
-    var config = new MapperConfiguration(cfg => {
-        cfg.CreateMap<TransactionEntity, TransactionModel>();
-        cfg.CreateMap<UserEntity, UserModel>();
-    });
-
-    var mapper = config.CreateMapper();
+    var mapper = PrepareAutoMapperConfig().CreateMapper();
     builder.Services.AddSingleton(mapper);
 
     //Services and repositories
@@ -130,9 +127,19 @@ void ConfigureDapper()
  
 }
 
-void ConfigureAuth(AppSettings appSettings)
+void ConfigureAuth()
 {
     builder.Services
         .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie();
+}
+
+MapperConfiguration PrepareAutoMapperConfig()
+{
+    return new MapperConfiguration(cfg => {
+        cfg.CreateMap<TransactionEntity, TransactionModel>();
+        cfg.CreateMap<UserEntity, UserModel>();
+        cfg.CreateMap<BudgetEntity, BudgetModel>();
+        cfg.CreateMap<BankAccountEntity, BankAccountModel>();
+    });
 }

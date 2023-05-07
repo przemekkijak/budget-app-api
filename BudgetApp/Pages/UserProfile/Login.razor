@@ -1,7 +1,6 @@
 @page "/login"
-@using BudgetApp.Middlewares
-@using Microsoft.AspNetCore.Components
 @using BudgetApp.Core.Features.Users.Models
+@using BudgetApp.Middlewares
 @inject NavigationManager NavigationManager
 
 <h1>Login</h1>
@@ -26,7 +25,7 @@
 
     private void HandleValidSubmit()
     {
-        Guid key = Guid.NewGuid();
+        var key = Guid.NewGuid();
         BlazorCookieLoginMiddleware.Logins[key] = loginModel;
         NavigationManager.NavigateTo($"/login?key={key}", true);
     }

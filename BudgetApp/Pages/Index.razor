@@ -1,37 +1,66 @@
 ﻿@page "/"
 @using BudgetApp.Pages.Components
+@using BudgetApp.Core.Features.Budgets.Queries
+@using BudgetApp.Infrastructure
+@using MediatR
+@using BudgetApp.Core.Features.Budgets.Commands
+@inject IMediator Mediator
 
 <PageTitle>Dashboard</PageTitle>
 
-<div class="container">
-    @if (SelectedBudgetId.HasValue)
+    @if (DefaultBudgetId.HasValue)
     {
-        <div class="row">
-            <div class="col-4 mb-4">
-                <BankAccountsSummary BudgetId="SelectedBudgetId!.Value"></BankAccountsSummary>
+        <div class="container">
+            <div class="row">
+                <div class="col-4 mb-4">
+                    <BankAccountsSummary BudgetId="DefaultBudgetId.Value"></BankAccountsSummary>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div>
-                <TransactionList BudgetId="SelectedBudgetId"/>
+            <div class="row">
+                <div>
+                    <TransactionList BudgetId="DefaultBudgetId.Value"/>
+                </div>
             </div>
         </div>
     }
-</div>
 
 @code {
+
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
 
-    private int? SelectedBudgetId { get; set; }
+    private int UserId { get; set; }
+
+    private int? DefaultBudgetId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
+            UserId = authState.User.GetUserId();
 
+            var getBudgetQuery = new GetBudget()
+            {
+                UserId = UserId
+            };
+
+            var budget = await Mediator.Send(getBudgetQuery);
+            if (!budget.Success || budget.Value.Id == default)
+            {
+                var createBudgetCommand = new CreateBudget()
+                {
+                    UserId = UserId
+                };
+
+                await Mediator.Send(createBudgetCommand);
+
+                budget = await Mediator.Send(getBudgetQuery);
+            }
+            
+            DefaultBudgetId = budget.Value.Id;
         }
     }
+}        
+
     
-}

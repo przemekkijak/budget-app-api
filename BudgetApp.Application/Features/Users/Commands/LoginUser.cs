@@ -1,7 +1,6 @@
 using BCrypt;
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Features.Users.Models;
-using BudgetApp.Domain;
 using BudgetApp.Domain.Interfaces.Repositories;
 using MediatR;
 
@@ -36,7 +35,7 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
             return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
         }
 
-        await mediator.Send(new SignUserTokenCommand()
+        await mediator.Send(new SignUserTokenCommand
         {
             UserEntity = userEntity
         }, cancellationToken);

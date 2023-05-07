@@ -25,7 +25,6 @@
     <ItemGroup>
       <Folder Include="Features\Transactions\Helpers" />
       <Folder Include="Features\Users\Queries" />
-      <Folder Include="Mappings" />
     </ItemGroup>
 
 </Project>

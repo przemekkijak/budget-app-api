@@ -1,13 +1,10 @@
-@using BudgetApp.Core
-@using BudgetApp.Domain.Enums
-@using BudgetApp.Helpers
-@using System.Transactions
+@using BudgetApp.Infrastructure
+@using MediatR
 @using BudgetApp.Core.Features.Budgets.Models
 @using BudgetApp.Core.Features.Budgets.Queries
 @using BudgetApp.Core.Features.Transactions.Models
 @using BudgetApp.Core.Features.Transactions.Queries
-@using BudgetApp.Infrastructure
-@using MediatR
+@using BudgetApp.Domain.Enums
 @inject DialogService DialogService
 @inject IMediator Mediator
 
@@ -24,7 +21,7 @@
         AllowPaging="true"
         Data="@Transactions"
         TItem="TransactionModel"
-        RowClick="(e) => TransactionDialog(e.Data)">
+        RowClick="e => TransactionDialog(e.Data)">
         <Columns>
             <RadzenDataGridColumn TItem="TransactionModel" Property="CreateDate" Title="Date"/>
             <RadzenDataGridColumn TItem="TransactionModel" Property="AmountText" Title="Amount">
@@ -69,17 +66,18 @@
         var authState = await AuthState;
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            var defaultBudget = await Mediator.Send(new GetBudgetCommand()
+            var getBudgetCommand = new GetBudget()
             {
                 BudgetId = BudgetId,
                 UserId = authState.User.GetUserId()
-            });
-            
+            };
+
+            var defaultBudget = await Mediator.Send(getBudgetCommand);
             if (defaultBudget.Success)
             {
                 budget = defaultBudget.Value;
 
-                var transactions = await Mediator.Send(new GetTransactionsForBudgetCommand()
+                var transactions = await Mediator.Send(new GetTransactionsForBudget
                 {
                     BudgetId = defaultBudget.Value.Id,
                     CurrentMonthOnly = false

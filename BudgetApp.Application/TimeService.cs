@@ -16,7 +16,7 @@ public class TimeService
         return TimeZoneInfo.ConvertTimeToUtc(localTime, TimeZone);
     }
         
-    private static TimeZoneInfo _timeZone = null;
+    private static TimeZoneInfo _timeZone;
 
     public static TimeZoneInfo TimeZone
     {

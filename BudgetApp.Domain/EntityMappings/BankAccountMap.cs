@@ -18,5 +18,6 @@ public class BankAccountMap : DommelEntityMap<BankAccountEntity>
         Map(x => x.UpdateDate).ToColumn("update_date");
         Map(x => x.Amount).ToColumn("amount");
         Map(x => x.IsDefault).ToColumn("is_default");
+        Map(x => x.IsDeleted).ToColumn("is_deleted");
     }
 }

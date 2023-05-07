@@ -46,8 +46,8 @@ namespace BudgetApp.Core.Common
         /// </summary>
         public bool Success
         {
-            get { return this.success == true || Errors.Count == 0; }
-            set { this.success = value; }
+            get { return success == true || Errors.Count == 0; }
+            set { success = value; }
         }
 
         /// <summary>

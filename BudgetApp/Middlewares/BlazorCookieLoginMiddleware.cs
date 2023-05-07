@@ -23,7 +23,7 @@ public class BlazorCookieLoginMiddleware
             var key = Guid.Parse(context.Request.Query["key"]);
             var info = Logins[key];
 
-            await mediator.Send(new LoginUserCommand()
+            await mediator.Send(new LoginUserCommand
             {
                 User = info
             });

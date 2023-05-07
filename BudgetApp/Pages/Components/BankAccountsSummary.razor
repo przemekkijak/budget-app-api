@@ -1,4 +1,7 @@
 @using BudgetApp.Core.Features.BankAccounts.Models
+@using BudgetApp.Core.Features.BankAccounts.Queries
+@using MediatR
+@inject IMediator Mediator
 
 <div>
     @if (BankAccounts.Any())
@@ -35,10 +38,15 @@
     [Parameter]
     public int BudgetId { get; set; }
 
-    private List<BankAccountModel> BankAccounts { get; set; } = new List<BankAccountModel>();
+    private List<BankAccountModel> BankAccounts { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // BankAccounts = await BankAccountService.GetForBudget(BudgetId);
+        var getBankAccountsForBudget = new GetBankAccountsForBudget()
+        {
+            BudgetId = BudgetId
+        };
+
+        BankAccounts = await Mediator.Send(getBankAccountsForBudget);
     }
 }

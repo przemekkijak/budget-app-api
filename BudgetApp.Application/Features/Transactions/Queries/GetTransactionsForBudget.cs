@@ -5,25 +5,25 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Queries;
 
-public class GetTransactionsForBudgetCommand : IRequest<List<TransactionModel>>
+public class GetTransactionsForBudget : IRequest<List<TransactionModel>>
 {
     public int BudgetId { get; init; }
 
-    public bool CurrentMonthOnly { get; init; } = false;
+    public bool CurrentMonthOnly { get; init; }
 }
 
-public class GetTransactionsForBudgetCommandHandler : IRequestHandler<GetTransactionsForBudgetCommand, List<TransactionModel>>
+public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsForBudget, List<TransactionModel>>
 {
     private readonly ITransactionRepository transactionRepository;
     private readonly IMapper mapper;
 
-    public GetTransactionsForBudgetCommandHandler(ITransactionRepository transactionRepository, IMapper mapper)
+    public GetTransactionsForBudgetHandler(ITransactionRepository transactionRepository, IMapper mapper)
     {
         this.transactionRepository = transactionRepository;
         this.mapper = mapper;
     }
 
-    public async Task<List<TransactionModel>> Handle(GetTransactionsForBudgetCommand request, CancellationToken cancellationToken)
+    public async Task<List<TransactionModel>> Handle(GetTransactionsForBudget request, CancellationToken cancellationToken)
     {
         DateTime? startDate = null;
         DateTime? endDate = null;

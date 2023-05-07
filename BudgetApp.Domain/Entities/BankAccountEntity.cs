@@ -13,4 +13,6 @@ public class BankAccountEntity : EntityBase
     public virtual decimal Amount { get; set; }
 
     public virtual bool IsDefault { get; set; }
+
+    public virtual bool IsDeleted { get; set; }
 }
