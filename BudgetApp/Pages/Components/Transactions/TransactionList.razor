@@ -6,16 +6,25 @@
 @using BudgetApp.Core.Features.Transactions.Queries
 @using BudgetApp.Domain.Enums
 @using BudgetApp.Core.Features.BankAccounts.Queries
+@using BudgetApp.Core.Features.Transactions.Commands
+@using CsvHelper
+@using System.Dynamic
+@using System.Globalization
 @using BudgetApp.Pages.Components.Imports
 @inject DialogService DialogService
 @inject IMediator Mediator
 
 <div class="transactionContainer">
     <div class="buttonContainer">
-        <RadzenButton Shade="Shade.Dark" Click="@(_ => OpenTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
-        <RadzenButton Shade="Shade.Darker" Click="@(_ => OpenImportFileDialog())" Text="Import" ButtonStyle="ButtonStyle.Secondary"/>
+        <label class="rz-button">
+            <RadzenButton Shade="Shade.Dark" Click="@(_ => OpenTransactionDialog())" Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+        </label>
+        <label class="rz-button" for="file-upload">
+            <RadzenButton Shade="Shade.Darker" Text="Import" ButtonStyle="ButtonStyle.Secondary"/>
+            <InputFile id="file-upload" OnChange="@ProcessImportedCsvFile" style="display:none;"/>
+        </label>
     </div>
-    
+
     <RadzenDataGrid
         AllowFiltering="true"
         AllowColumnResize="true"
@@ -45,7 +54,7 @@
             <RadzenDataGridColumn TItem="TransactionModel" Property="BankAccount.Name" Title="Account"/>
         </Columns>
     </RadzenDataGrid>
-    
+
 </div>
 
 @code {
@@ -56,8 +65,6 @@
     [Parameter]
     public int? BudgetId { get; set; }
     
-    RadzenUpload RadzenUpload;
-
     private BudgetModel budget { get; set; }
 
     private List<TransactionModel> Transactions { get; set; }
@@ -118,11 +125,6 @@
         }
     }
 
-    private async Task OpenImportFileDialog()
-    {
-        await DialogService.OpenAsync<ImportTransactionsForm>("Import Transactions");
-    }
-
     private string GetStatusCellStyle(TransactionStatusEnum status)
     {
         return status switch
@@ -139,5 +141,39 @@
         return amount > 0
             ? "green-font"
             : "red-font";
+    }
+    
+    private async Task ProcessImportedCsvFile(InputFileChangeEventArgs e)
+    {
+        const string csvType = "text/csv";
+        if (e.File.ContentType != csvType)
+        {
+            //TODO info about required CSV file
+            return;
+        }
+        
+        var importedTransactions = new List<ExpandoObject>();
+        
+        await using var streamData = e.File.OpenReadStream();
+        using var reader = new StreamReader(streamData);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        
+        await csv.ReadAsync();
+        csv.ReadHeader();
+        while (await csv.ReadAsync())
+        {
+            var record = csv.GetRecord<dynamic>();
+            if (record is not null)
+            {
+                importedTransactions.Add(record);
+            }
+        }
+
+        var formParameters = new Dictionary<string, object>()
+        {
+            { "Transactions", importedTransactions }
+        };
+        
+        await DialogService.OpenAsync<ImportedTransactionsForm>("Imported transactions", formParameters);
     }
 }

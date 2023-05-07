@@ -1,0 +1,32 @@
+@using System.Dynamic
+<h3>ImportedTransactionsForm</h3>
+
+
+
+@code {
+
+    [Parameter]
+    public List<ExpandoObject> Transactions { get; set; }
+
+    private Dictionary<int, object> AvailableValues { get; set; } = new Dictionary<int, object>();
+
+    private bool ShowForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Transactions.Any())
+        {
+            var exampleTransaction = Transactions.First();
+            for (var i = 0; i < exampleTransaction.Count(); i++)
+            {
+                var availableValue = exampleTransaction.ElementAt(i).Value;
+                if (availableValue != null) 
+                    AvailableValues[i] = availableValue;
+            }
+
+            ShowForm = true;
+
+        }
+    }
+
+}
