@@ -1,33 +1,38 @@
 using System.Dynamic;
-using System.Globalization;
-using CsvHelper;
+using BudgetApp.Core.Features.Transactions.Models;
 using MediatR;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;
 
 public class ImportTransactions : IRequest
 {
-    public IBrowserFile ImportedFile { get; init; }
+    public int UserId { get; set; }
+
+    public int BudgetId { get; set; }
+
+    public ImportedTransactionScheme ImportedTransactionScheme { get; set; }
+
+    public List<ExpandoObject> Transactions { get; set; }
 }
 
 public class ImportTransactionsHandler : IRequestHandler<ImportTransactions>
 {
     public async Task Handle(ImportTransactions request, CancellationToken cancellationToken)
     {
-        await using var streamData = request.ImportedFile.OpenReadStream(cancellationToken: cancellationToken);
-        using var reader = new StreamReader(streamData);
-        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        var transactionsToImport = new List<TransactionModel>();
 
-        await csv.ReadAsync();
-        csv.ReadHeader();
-        var results = new List<ExpandoObject>();
-        
-        while (await csv.ReadAsync())
+        foreach (var t in request.Transactions)
         {
-            results.Add(csv.GetRecord<dynamic>());
+            transactionsToImport.Add(new TransactionModel()
+            {
+                BudgetId = request.BudgetId,
+                UserId = request.UserId,
+                Description = t.ElementAt(request.ImportedTransactionScheme.DescriptionIndex).Value.ToString(),
+                CreateDate = TimeService.Now,
+                Amount = decimal.Parse(t.ElementAt(request.ImportedTransactionScheme.AmountIndex).Value.ToString())
+            });
         }
-        
+
         Console.WriteLine("test");
     }
 }
