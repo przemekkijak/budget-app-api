@@ -1,5 +1,6 @@
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Features.Transactions.Models;
+using BudgetApp.Core.Notifications;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.Domain.Interfaces.Repositories;
@@ -17,11 +18,13 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
 {
     private readonly IBudgetRepository budgetRepository;
     private readonly ITransactionRepository transactionRepository;
+    private readonly IMediator mediator;
 
-    public CreateTransactionHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository)
+    public CreateTransactionHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator)
     {
         this.budgetRepository = budgetRepository;
         this.transactionRepository = transactionRepository;
+        this.mediator = mediator;
     }
     
     public async Task<ExecutionResult> Handle(CreateTransaction request, CancellationToken cancellationToken)
@@ -53,6 +56,10 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
         };
 
         await transactionRepository.CreateAsync(transactionEntity);
+
+        await mediator.Publish(
+            new TransactionAmountChangedNotification(transactionEntity.BankAccountId, transactionEntity.Amount), cancellationToken);
+        
         return new ExecutionResult();
     }
     

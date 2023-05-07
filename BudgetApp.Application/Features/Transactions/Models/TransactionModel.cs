@@ -1,4 +1,5 @@
-﻿using BudgetApp.Domain.Enums;
+﻿using BudgetApp.Core.Features.BankAccounts.Models;
+using BudgetApp.Domain.Enums;
 
 namespace BudgetApp.Core.Features.Transactions.Models;
 
@@ -9,6 +10,8 @@ public class TransactionModel
     public int BudgetId { get; init; }
 
     public int BankAccountId { get; set; }
+
+    public BankAccountModel BankAccount { get; set; }
 
     public decimal Amount { get; set; }
 

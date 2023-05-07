@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using Dommel;
 using Npgsql;
 
@@ -33,6 +34,12 @@ public class BaseRepository<T> : BaseRepository, IBaseRepository<T> where T : En
         using var con = CreateConnection();
         var createdEntity = (int)await con.InsertAsync(entity);
         return await con.GetAsync<T>(createdEntity);
+    }
+
+    public virtual async Task<List<T>> GetByIds(IEnumerable<int> ids)
+    {
+        using var con = CreateConnection();
+        return (await con.SelectAsync<T>(a => ids.Contains(a.Id))).ToList();
     }
 
     public virtual async Task<bool> UpdateAsync(T entity)

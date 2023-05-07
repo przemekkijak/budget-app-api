@@ -17,6 +17,7 @@ public class BankAccountRepository : BaseRepository<BankAccountEntity>, IBankAcc
         using var con = CreateConnection();
         return (await con.SelectAsync<BankAccountEntity>(a => a.BudgetId == budgetId)).ToList();
     }
+    
 
     public async Task UpdateAccountAmount(int bankAccountId, decimal amount)
     {

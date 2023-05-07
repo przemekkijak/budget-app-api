@@ -8,6 +8,7 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.EntityMappings;
 using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using BudgetApp.Middlewares;
 using Dapper;
 using Dapper.FluentMap;

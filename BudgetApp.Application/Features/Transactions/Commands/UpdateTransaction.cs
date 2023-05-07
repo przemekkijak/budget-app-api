@@ -1,5 +1,6 @@
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Features.Transactions.Models;
+using BudgetApp.Core.Notifications;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.Domain.Interfaces.Repositories;
@@ -17,11 +18,13 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
 {
     private readonly ITransactionRepository transactionRepository;
     private readonly IBudgetRepository budgetRepository;
+    private readonly IMediator mediator;
 
-    public UpdateTransactionHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository)
+    public UpdateTransactionHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository, IMediator mediator)
     {
         this.transactionRepository = transactionRepository;
         this.budgetRepository = budgetRepository;
+        this.mediator = mediator;
     }
     
     public async Task<ExecutionResult> Handle(UpdateTransaction request, CancellationToken cancellationToken)
@@ -40,35 +43,53 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
             return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.BudgetNotFound));
         }
         
-        var canPerformAction =
-            await IsUserAuthorizedToPerformActionOnBudget(request.UserId, budget, TransactionActionEnum.Write);
-
+        var canPerformAction = await IsUserAuthorizedToPerformActionOnBudget(request.UserId, budget, TransactionActionEnum.Write);
         if (!canPerformAction)
         {
             return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
+        
 
-        //We need to restore account amount, as transaction is not completed anymore
-        if (transaction.Status == TransactionStatusEnum.Completed && request.TransactionModel.Status != TransactionStatusEnum.Completed)
+        var isBankAccountChanged = transaction.BankAccountId != request.TransactionModel.BankAccountId;
+        var isStatusChanged = transaction.Status != request.TransactionModel.Status;
+        var isAmountChanged = transaction.Amount != request.TransactionModel.Amount;
+        
+        if (isBankAccountChanged)
         {
-            var reversedAmount = transaction.Amount * -1;
-            // await bankAccountService.UpdateAccountAmount(transaction.BankAccountId, reversedAmount);
+            //Restore amount for original bank account
+            if (transaction.Status == TransactionStatusEnum.Completed)
+            {
+                await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount * -1);
+            }
+
+            //Apply amount for new bank account
+            if (request.TransactionModel.Status == TransactionStatusEnum.Completed)
+            {
+                await PublishAmountChangeNotification(request.TransactionModel.BankAccountId, request.TransactionModel.Amount);
+            }
+        } else if (isStatusChanged)
+        {
+            if (transaction.Status == TransactionStatusEnum.Completed && request.TransactionModel.Status != TransactionStatusEnum.Completed)
+            {
+                await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount * -1);
+            }
+            else
+            {
+                await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount);
+            }
+        } else if (isAmountChanged)
+        {
+            await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount * -1);
+            await PublishAmountChangeNotification(transaction.BankAccountId, request.TransactionModel.Amount);
         }
 
+        transaction.BankAccountId = request.TransactionModel.BankAccountId;
+        transaction.Description = request.TransactionModel.Description;
         transaction.Amount = request.TransactionModel.Amount;
         transaction.Status = request.TransactionModel.Status;
-        transaction.BankAccountId = request.TransactionModel.BankAccountId;
         transaction.UpdateDate = TimeService.Now;
 
-        
         var update = await transactionRepository.UpdateAsync(transaction);
-        
-        if (transaction.Status == TransactionStatusEnum.Completed)
-        {
-            // await bankAccountService.UpdateAccountAmount(transaction.BankAccountId, transaction.Amount);
-        }
-        //TODO what if false? Handle and log error, those two operations should be done in transaction (for later) 
-        
         return new ExecutionResult<bool>(update);
     }
     
@@ -81,5 +102,10 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
 
         return false;
         //TODO check budget permissions 
+    }
+
+    private async Task PublishAmountChangeNotification(int bankAccountId, decimal amount)
+    {
+        await mediator.Publish(new TransactionAmountChangedNotification(bankAccountId, amount));
     }
 }

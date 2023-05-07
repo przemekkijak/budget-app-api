@@ -2,7 +2,10 @@
 @using BudgetApp.Core.Features.Transactions.Models
 @using BudgetApp.Domain.Enums
 @using BudgetApp.Core.Features.BankAccounts.Models
+@using BudgetApp.Core.Features.Transactions.Commands
+@using MediatR
 @inject DialogService DialogService
+@inject IMediator Mediator
 
 <RadzenTemplateForm TItem="TransactionModel" Data="@TransactionModel" Submit="@Submit">
     <div class="container-fluid">
@@ -57,9 +60,13 @@
     public List<BankAccountModel> BankAccounts { get; set; }
 
     private TransactionModel TransactionModel { get; set; }
+
+    private bool IsNewTransaction { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
+        IsNewTransaction = Transaction is null;
+        
         TransactionModel = Transaction ?? new TransactionModel
         {
             Id = int.MinValue,
@@ -72,7 +79,29 @@
     {
         var authState = await AuthState;
         var userId = authState.User.GetUserId();
-        // var added = await TransactionService.UpdateTransaction(userId, TransactionModel);
-        // DialogService.Close(added.Success);
+
+        if (IsNewTransaction)
+        {
+            var createTransaction = new CreateTransaction()
+            {
+                UserId = userId,
+                TransactionModel = TransactionModel
+            };
+
+            await Mediator.Send(createTransaction);
+        }
+        else
+        {
+            var updateTransaction = new UpdateTransaction()
+            {
+                UserId = userId,
+                TransactionModel = TransactionModel
+            };
+
+            await Mediator.Send(updateTransaction);
+        }
+        
+        //TODO handle add/update result, display error etc
+        DialogService.Close(true);
     }
 }

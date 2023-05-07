@@ -1,5 +1,6 @@
 ﻿
 using BudgetApp.Domain.Entities;
+using BudgetApp.Domain.Repositories.Interfaces;
 
 namespace BudgetApp.Domain.Interfaces.Repositories;
 

@@ -9,3 +9,11 @@
 .rz-data-row:hover {
     cursor: pointer;
 }
+
+.completed-status {
+    color: darkgreen;
+}
+
+.scheduled-status {
+    color: yellow;
+}

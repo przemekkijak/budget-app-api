@@ -5,6 +5,8 @@
 @using BudgetApp.Core.Features.Transactions.Models
 @using BudgetApp.Core.Features.Transactions.Queries
 @using BudgetApp.Domain.Enums
+@using BudgetApp.Core.Features.BankAccounts.Models
+@using BudgetApp.Core.Features.BankAccounts.Queries
 @inject DialogService DialogService
 @inject IMediator Mediator
 
@@ -39,6 +41,7 @@
                     </span>
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="TransactionModel" Property="BankAccount.Name" Title="Account"/>
         </Columns>
     </RadzenDataGrid>
     
@@ -90,10 +93,12 @@
 
     private async Task TransactionDialog(TransactionModel? transaction = null)
     {
+        var bankAccounts = await Mediator.Send(new GetBankAccountsForBudget() { BudgetId = budget.Id });
+        
         var parameters = new Dictionary<string, object>
         {
             { "BudgetId", budget.Id },
-            { "BankAccounts", budget.BankAccounts}
+            { "BankAccounts", bankAccounts}
         };
 
         if (transaction is not null)
