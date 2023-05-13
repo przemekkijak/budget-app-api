@@ -4,6 +4,11 @@
 <PageTitle>BudgetApp</PageTitle>
 
 <div class="page">
+    <RadzenDialog/>
+    <RadzenNotification/>
+    <RadzenContextMenu/>
+    <RadzenTooltip/>
+    
     <div class="sidebar">
         <NavMenu/>
     </div>
@@ -21,14 +26,9 @@
                 </NotAuthorized>
             </AuthorizeView>
         </div>
-        
+
         <article class="content px-4">
             @Body
         </article>
-        
-        <RadzenDialog/>
-        <RadzenNotification/>
-        <RadzenContextMenu/>
-        <RadzenTooltip/>
     </main>
 </div>
