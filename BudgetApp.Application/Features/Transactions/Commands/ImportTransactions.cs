@@ -10,10 +10,8 @@ namespace BudgetApp.Core.Features.Transactions.Commands;
 public class ImportTransactions : IRequest
 {
     public int UserId { get; set; }
-
+    
     public int BudgetId { get; set; }
-
-    public int BankAccountId { get; set; }
 
     public ImportedTransactionScheme ImportedTransactionScheme { get; set; }
 
@@ -37,9 +35,9 @@ public class ImportTransactionsHandler : IRequestHandler<ImportTransactions>
         {
             var entity = new TransactionEntity()
             {
-                BudgetId = request.BudgetId,
+                BudgetId = request.ImportedTransactionScheme.BankAccountId,
                 UserId = request.UserId,
-                BankAccountId = request.BankAccountId,
+                BankAccountId = request.ImportedTransactionScheme.BankAccountId,
                 Description = t.ElementAt(request.ImportedTransactionScheme.DescriptionIndex).Value.ToString(),
                 CreateDate = TimeService.Now,
                 Amount = decimal.Parse(t.ElementAt(request.ImportedTransactionScheme.AmountIndex).Value.ToString()),

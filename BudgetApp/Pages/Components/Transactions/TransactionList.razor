@@ -19,23 +19,25 @@
 @using Radzen.Blazor
 @inject DialogService DialogService
 @inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
 
 <div class="transactionContainer">
-    <div class="buttonContainer">
-        
-        <label class="rz-button" for="file-upload">
-            <RadzenButton Shade="Shade.Darker" Text="Import" ButtonStyle="ButtonStyle.Secondary"/>
-            <InputFile id="file-upload" OnChange="@ProcessImportedCsvFile" style="display:none;"/>
-        </label>
-    </div>
-
+    
     <RadzenButton 
         ButtonStyle="ButtonStyle.Success"
         Icon="add_circle_outline" 
         class="mt-2 mb-4" 
-        Text="Add New Order" 
+        Text="Add" 
         Click="@InsertRow" 
         Disabled=@(TransactionToInsert != null || TransactionToUpdate != null) />
+
+    <RadzenButton
+        Shade="Shade.Darker"
+        Text="Import"
+        ButtonStyle="ButtonStyle.Secondary"
+        Icon="upload"
+        Click='() => NavigationManager.NavigateTo($"transactions/import/{BudgetId!.Value}")'/>
     
     <RadzenDataGrid
         @ref="TransactionsGrid"
@@ -234,7 +236,8 @@
             TransactionModel = transaction,
             UserId = UserId
         });
-        
+
+        await TransactionsGrid.Reload();
         await ReloadBankAccountSummary();
     }
     
@@ -291,8 +294,8 @@
                     TransactionId = existingTransaction.Id
                 });
 
-                await TransactionsGrid.Reload();
                 await ReloadBankAccountSummary();
+                await TransactionsGrid.Reload();
             }
         }
     }
@@ -335,19 +338,8 @@
             //TODO info about required CSV file
             return;
         }
-
-        var importedTransactions = await CsvService.GetRecordsFromCsvFile(e.File);
-
-        var user = await AuthState;
-
-        var formParameters = new Dictionary<string, object>()
-        {
-            { "BudgetId", BudgetId!.Value },
-            { "UserId", user.GetUserId() },
-            { "BankAccounts", BankAccounts},
-            { "Transactions", importedTransactions }
-        };
         
-        await DialogService.OpenAsync<ImportedTransactionsForm>("Imported transaction scheme", formParameters);
+        var fileDataBase64 = await CsvService.ConvertFileToBase64(e.File);
+        NavigationManager.NavigateTo($"/transactions/import?importedFileData={fileDataBase64}");
     }
 }

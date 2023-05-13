@@ -7,6 +7,16 @@ namespace BudgetApp.Core.Services;
 
 public static class CsvService
 {
+    public static async Task<string> ConvertFileToBase64(IBrowserFile file)
+    {
+        using (var ms = new MemoryStream())
+        {
+            await file.OpenReadStream().CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            return Convert.ToBase64String(bytes);
+        }
+    }
+    
     public static async Task<List<ExpandoObject>> GetRecordsFromCsvFile(IBrowserFile file)
     {
         var results = new List<ExpandoObject>();
