@@ -14,12 +14,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-4 mb-4">
-                    <BankAccountsSummary BudgetId="DefaultBudgetId.Value"></BankAccountsSummary>
+                    <BankAccountsSummary BudgetId="DefaultBudgetId.Value" ShouldReload="ShouldReloadBankAccountSummary"></BankAccountsSummary>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xl-12">
-                    <TransactionList BudgetId="DefaultBudgetId.Value"/>
+                    <TransactionList BudgetId="DefaultBudgetId.Value" TransactionModified="ReloadBankAccountSummary"/>
                 </div>
             </div>
         </div>
@@ -33,6 +33,8 @@
     private int UserId { get; set; }
 
     private int? DefaultBudgetId { get; set; }
+
+    private bool ShouldReloadBankAccountSummary { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,6 +63,11 @@
             
             DefaultBudgetId = budget.Value.Id;
         }
+    }
+
+    private void ReloadBankAccountSummary()
+    {
+        ShouldReloadBankAccountSummary = !ShouldReloadBankAccountSummary;
     }
 }        
 

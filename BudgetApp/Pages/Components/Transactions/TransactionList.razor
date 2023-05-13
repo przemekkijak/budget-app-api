@@ -138,7 +138,10 @@
 
     [Parameter]
     public int? BudgetId { get; set; }
-    
+
+    [Parameter]
+    public EventCallback<bool> TransactionModified { get; set; }
+
     private BudgetModel Budget { get; set; }
 
     private List<TransactionModel> Transactions { get; set; }
@@ -221,6 +224,7 @@
         });
 
         TransactionToInsert = null;
+        await ReloadBankAccountSummary();
     }
     
     private async Task OnUpdateRow(TransactionModel transaction)
@@ -230,6 +234,8 @@
             TransactionModel = transaction,
             UserId = UserId
         });
+        
+        await ReloadBankAccountSummary();
     }
     
     private async Task EditRow(TransactionModel transaction)
@@ -286,6 +292,7 @@
                 });
 
                 await TransactionsGrid.Reload();
+                await ReloadBankAccountSummary();
             }
         }
     }
@@ -314,6 +321,11 @@
 
 
     #endregion
+
+    private async Task ReloadBankAccountSummary()
+    {
+        await TransactionModified.InvokeAsync();
+    }
     
     private async Task ProcessImportedCsvFile(InputFileChangeEventArgs e)
     {

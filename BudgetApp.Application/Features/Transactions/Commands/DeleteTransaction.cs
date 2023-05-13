@@ -1,4 +1,5 @@
 using BudgetApp.Core.Common;
+using BudgetApp.Core.Notifications;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.Domain.Interfaces.Repositories;
@@ -16,11 +17,16 @@ public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, Execu
 {
     private readonly ITransactionRepository transactionRepository;
     private readonly IBudgetRepository budgetRepository;
+    private readonly IMediator mediator;
 
-    public DeleteTransactionHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository)
+    public DeleteTransactionHandler(
+        ITransactionRepository transactionRepository, 
+        IBudgetRepository budgetRepository,
+        IMediator mediator)
     {
         this.transactionRepository = transactionRepository;
         this.budgetRepository = budgetRepository;
+        this.mediator = mediator;
     }
 
     public async Task<ExecutionResult> Handle(DeleteTransaction request, CancellationToken cancellationToken)
@@ -49,6 +55,11 @@ public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, Execu
         transaction.IsDeleted = true;
         transaction.UpdateDate = TimeService.Now;
         await transactionRepository.UpdateAsync(transaction);
+
+        if (transaction.Status == TransactionStatusEnum.Completed)
+        {
+            await mediator.Publish(new TransactionAmountChangedNotification(transaction.BankAccountId, transaction.Amount * -1), cancellationToken);
+        }
         
         return new ExecutionResult();
     }

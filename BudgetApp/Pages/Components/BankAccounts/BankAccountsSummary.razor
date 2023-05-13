@@ -1,5 +1,6 @@
 @using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Features.BankAccounts.Queries
+@using BudgetApp.Pages.Components.Transactions
 @using MediatR
 @inject IMediator Mediator
 
@@ -38,9 +39,23 @@
     [Parameter]
     public int BudgetId { get; set; }
 
+    [Parameter]
+    public bool ShouldReload { get; set; }
+
     private List<BankAccountModel> BankAccounts { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadInitialData();
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await LoadInitialData();
+    }
+
+    private async Task LoadInitialData()
     {
         var getBankAccountsForBudget = new GetBankAccountsForBudget()
         {
