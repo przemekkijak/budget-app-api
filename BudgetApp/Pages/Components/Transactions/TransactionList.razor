@@ -13,6 +13,7 @@
 @using System.Transactions
 @using BudgetApp.Core
 @using BudgetApp.Core.Features.BankAccounts.Models
+@using BudgetApp.Core.Features.Transactions.Helpers
 @using BudgetApp.Core.Services
 @using BudgetApp.Helpers
 @using BudgetApp.Pages.Components.Imports
@@ -69,7 +70,7 @@
                     <RadzenNumeric TValue="decimal" @bind-Value="transaction.Amount" Style="width: 50%;"/>
                 </EditTemplate>
                 <Template Context="transaction">
-                    <span class="@GetAmountCellStyle(transaction.Amount)">
+                    <span class="@TransactionHelper.GetAmountCellStyle(transaction.Amount)">
                         @transaction.AmountText
                     </span>
                 </Template>
@@ -315,13 +316,7 @@
             };
     }
 
-    private string GetAmountCellStyle(decimal amount)
-    {
-        return amount > 0
-            ? "green-font"
-            : "red-font";
-    }
-
+    
 
     #endregion
 

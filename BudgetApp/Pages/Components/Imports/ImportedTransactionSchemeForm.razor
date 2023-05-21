@@ -19,7 +19,7 @@
                         <RadzenLabel Text="Date"/>
                     </div>
                     <div class="col-md-8">
-                        <RadzenDropDown @bind-Value="TransactionScheme.CreateDateIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
+                        <RadzenDropDown @bind-Value="TransactionScheme.PaymentDateIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
                     </div>
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Description"/>
@@ -51,19 +51,13 @@
 @code {
 
     [Parameter]
-    public int BudgetId { get; set; }
-
-    [Parameter]
-    public int UserId { get; set; }
-
-    [Parameter]
     public List<BankAccountModel> BankAccounts { get; set; }
     
     [Parameter]
     public ImportedTransactionScheme TransactionScheme { get; init; }
 
     [Parameter]
-    public List<ExpandoObject> ImportedRows { get; set; }
+    public ExpandoObject ExampleTransaction { get; set; }
     
     [Parameter]
     public EventCallback<bool> TransactionSchemeSaved { get; set; }
@@ -71,21 +65,19 @@
     private Dictionary<int, string> AvailableValues { get; } = new();
 
     private List<string> RequiredValues { get; set; }
-
-
+    
     private bool showForm;
 
     protected override async Task OnInitializedAsync()
     {
-        if (ImportedRows.Any())
+        if (ExampleTransaction != null)
         {
             PrepareRequiredValues();
 
-            var exampleTransaction = ImportedRows.First();
-            for (var i = 0; i < exampleTransaction.Count() - 1; i++)
+            for (var i = 0; i < ExampleTransaction.Count() - 1; i++)
             {
                 
-                var availableValue = exampleTransaction.ElementAt(i).Value;
+                var availableValue = ExampleTransaction.ElementAt(i).Value;
                 if (availableValue != null)
                     AvailableValues[i] = availableValue.ToString() ?? string.Empty;
             }

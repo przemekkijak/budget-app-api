@@ -22,8 +22,7 @@ public class TransactionModel
     public int UserId { get; init; }
 
     public string Description { get; set; }
-
-    //TODO add to entity 
+    
     public DateTime PaymentDate { get; set; }
 
     public DateTime CreateDate { get; set; }

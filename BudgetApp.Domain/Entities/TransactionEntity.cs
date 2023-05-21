@@ -19,4 +19,6 @@ public class TransactionEntity : EntityBase
     public string Description { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public DateTime PaymentDate { get; set; }
 }

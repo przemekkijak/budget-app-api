@@ -28,10 +28,10 @@
             @* Select headers step *@
             <RadzenStepsItem Text="Select fields" Disabled="!IsFileUploaded">
                 <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3" class="rz-my-6">2. Select matching fields</RadzenText>
-                @if (IsFileUploaded)
+                @if (IsFileUploaded && ImportedRows.Any())
                 {
-                    <ImportedTransactionSchemeForm 
-                        ImportedRows="ImportedRows" 
+                    <ImportedTransactionSchemeForm
+                        ExampleTransaction="ImportedRows.First()"
                         TransactionScheme="TransactionScheme"
                         BankAccounts="BankAccounts"
                         TransactionSchemeSaved="TransactionSchemeSaved"/>
@@ -45,6 +45,13 @@
             @* Verify transactions *@
             <RadzenStepsItem Text="Verify imported rows">
                 <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3" class="rz-my-6">3. Verify imported transactions</RadzenText>
+                @if (IsTransactionSchemeSaved)
+                {
+                    <VerifyImportedTransactionsForm
+                        ImportedRows="ImportedRows"
+                        BudgetId="BudgetId"
+                        TransactionScheme="TransactionScheme"/>
+                }
             </RadzenStepsItem>
         </Steps>
     </RadzenSteps>
@@ -61,24 +68,23 @@
     private RadzenSteps steps;
 
     private List<ExpandoObject> ImportedRows = new List<ExpandoObject>();
-    
-    private ImportedTransactionScheme TransactionScheme { get; } = new ();
+
+    private ImportedTransactionScheme TransactionScheme { get; } = new();
 
     private List<BankAccountModel> BankAccounts { get; set; }
 
     private bool IsFileUploaded { get; set; }
 
     private bool IsTransactionSchemeSaved { get; set; }
-    
+
     protected override async Task OnInitializedAsync()
     {
         BankAccounts = await Mediator.Send(new GetBankAccountsForBudget()
         {
             BudgetId = BudgetId
         });
-        
     }
-    
+
     private async Task ProcessImportedCsvFile(InputFileChangeEventArgs e)
     {
         const string csvType = "text/csv";
@@ -86,22 +92,24 @@
         {
             return;
         }
-        
+
         ImportedRows = await CsvService.GetRecordsFromCsvFile(e.File);
         IsFileUploaded = true;
-        
+
         await NextStep();
     }
 
     private async Task TransactionSchemeSaved()
     {
+        IsTransactionSchemeSaved = true;
         await NextStep();
     }
 
 
     private async Task NextStep()
     {
-        steps.StepsCollection[steps.SelectedIndex+1].Disabled = false;
+        steps.StepsCollection[steps.SelectedIndex + 1].Disabled = false;
         await steps.NextStep();
     }
+
 }

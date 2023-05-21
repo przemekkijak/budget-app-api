@@ -1,0 +1,205 @@
+@using BudgetApp.Core.Features.Transactions.Models
+@using System.Dynamic
+@using BudgetApp.Core
+@using BudgetApp.Core.Features.Transactions.Commands
+@using BudgetApp.Core.Features.Transactions.Helpers
+@using BudgetApp.Core.Features.Users.Models
+@using BudgetApp.Domain.Enums
+@using BudgetApp.Infrastructure
+@using MediatR
+@inject DialogService DialogService
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<div>
+    <RadzenButton Text="Save" Click="SaveChanges"/>
+
+    <RadzenDataGrid
+        TItem="TransactionModel"
+        Data="@ImportedTransactions"
+        EditMode="DataGridEditMode.Single"
+        @ref="ImportedTransactionsGrid">
+        <Columns>
+
+            @* Amount *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Kwota">
+                <EditTemplate Context="transaction">
+                    <RadzenNumeric TValue="decimal" @bind-Value="transaction.Amount" Style="width: 50%;"/>
+                </EditTemplate>
+                <Template Context="transaction">
+                    <span class="@TransactionHelper.GetAmountCellStyle(transaction.Amount)">
+                        @transaction.AmountText
+                    </span>
+                </Template>
+            </RadzenDataGridColumn>
+
+            @* Description *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Opis">
+                <EditTemplate Context="transaction">
+                    <RadzenTextBox @bind-Value="transaction.Description" Style="width: 70%;"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
+            @* PaymentDate *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="PaymentDate" Title="Data płatności">
+                <EditTemplate Context="transaction">
+                    <RadzenDatePicker @bind-Value="transaction.PaymentDate"/>
+                </EditTemplate>
+                <Template Context="transaction">
+                    <span>@transaction.PaymentDate.ToString("yyyy-MM-dd")</span>
+                </Template>
+            </RadzenDataGridColumn>
+
+            @* Actions  *@
+            <RadzenDataGridColumn TItem="TransactionModel" Context="transaction" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                <Template Context="transaction">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => EditRow(transaction))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteRow(transaction))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="transaction">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(() => SaveRow(transaction))">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => CancelEdit(transaction))">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(() => DeleteRow(transaction))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    [Parameter]
+    public int BudgetId { get; init; }
+
+    [Parameter]
+    public ImportedTransactionScheme TransactionScheme { get; init; }
+
+    [Parameter]
+    public List<ExpandoObject> ImportedRows { get; set; }
+
+    private List<TransactionModel> ImportedTransactions { get; set; }
+
+    private int UserId { get; set; }
+
+    private RadzenDataGrid<TransactionModel> ImportedTransactionsGrid { get; set; }
+
+    private TransactionModel TransactionToUpdate { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity?.IsAuthenticated ?? false)
+        {
+            UserId = authState.User.GetUserId();
+            ConvertRowsIntoTransactions();
+        }
+    }
+
+    private void ConvertRowsIntoTransactions()
+    {
+        var results = new List<TransactionModel>();
+
+        foreach (var i in ImportedRows)
+        {
+            var amount = GetElementFromTransactionScheme(i, TransactionScheme.AmountIndex);
+            var description = GetElementFromTransactionScheme(i, TransactionScheme.DescriptionIndex);
+            var paymentDate = DateTime.Parse(GetElementFromTransactionScheme(i, TransactionScheme.PaymentDateIndex));
+
+            var transaction = new TransactionModel()
+            {
+                BudgetId = BudgetId,
+                Amount = decimal.Parse(amount),
+                Description = description,
+                Status = TransactionStatusEnum.Completed,
+                BankAccountId = TransactionScheme.BankAccountId,
+                PaymentDate = paymentDate,
+                CreateDate = TimeService.Now,
+                UpdateDate = TimeService.Now,
+                UserId = UserId
+            };
+
+            results.Add(transaction);
+        }
+
+        ImportedTransactions = results;
+    }
+
+    private string GetElementFromTransactionScheme(ExpandoObject importedRow, int elementIndex)
+    {
+        var value = importedRow.ElementAt(elementIndex).Value;
+
+        try
+        {
+            return value.ToString() ?? string.Empty;
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        var reversedList = ImportedTransactions.ToList();
+        reversedList.Reverse();
+        
+        foreach (var transaction in reversedList)
+        {
+            await Mediator.Send(new CreateTransaction()
+            {
+                TransactionModel = transaction,
+                UserId = UserId
+            });
+        }
+        
+        //TODO Handle errors, show some success message etc
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task EditRow(TransactionModel transaction)
+    {
+        TransactionToUpdate = transaction;
+        await ImportedTransactionsGrid.EditRow(transaction);
+    }
+
+    private async Task SaveRow(TransactionModel transaction)
+    {
+        await ImportedTransactionsGrid.UpdateRow(transaction);
+    }
+
+    private void CancelEdit(TransactionModel transaction)
+    {
+        TransactionToUpdate = null;
+        ImportedTransactionsGrid.CancelEditRow(transaction);
+    }
+
+    private async Task DeleteRow(TransactionModel transaction)
+    {
+        var dialogResult = await DialogService.Confirm("Are you sure you want to delete this transaction?", "Delete transaction",
+            new ConfirmOptions()
+            {
+                OkButtonText = "Yes",
+                CancelButtonText = "No",
+            });
+
+        if (dialogResult.HasValue && dialogResult.Value)
+        {
+            if (transaction == TransactionToUpdate)
+            {
+                TransactionToUpdate = null;
+            }
+
+            ImportedTransactions.Remove(transaction);
+            await ImportedTransactionsGrid.Reload();
+        }
+    }
+
+}
