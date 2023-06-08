@@ -1,52 +1,32 @@
-using System.Dynamic;
 using BudgetApp.Core.Features.Transactions.Models;
-using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Enums;
-using BudgetApp.Domain.Interfaces.Repositories;
 using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;
 
 public class ImportTransactions : IRequest
 {
-    public int UserId { get; set; }
-    
-    public int BudgetId { get; set; }
-
-    public ImportedTransactionScheme ImportedTransactionScheme { get; set; }
-
-    public List<ExpandoObject> Transactions { get; set; }
+    public List<TransactionModel> Transactions { get; init; }
 }
 
 public class ImportTransactionsHandler : IRequestHandler<ImportTransactions>
 {
-    private readonly ITransactionRepository transactionRepository;
+    private readonly IMediator mediator;
 
-    public ImportTransactionsHandler(ITransactionRepository transactionRepository)
+    public ImportTransactionsHandler(IMediator mediator)
     {
-        this.transactionRepository = transactionRepository;
+        this.mediator = mediator;
     }
     
     public async Task Handle(ImportTransactions request, CancellationToken cancellationToken)
     {
-        var transactionsToImport = new List<TransactionEntity>();
-
+        //TODO this should be done in transaction
         foreach (var t in request.Transactions)
         {
-            var entity = new TransactionEntity()
+            await mediator.Send(new CreateTransaction()
             {
-                BudgetId = request.ImportedTransactionScheme.BankAccountId,
-                UserId = request.UserId,
-                BankAccountId = request.ImportedTransactionScheme.BankAccountId,
-                Description = t.ElementAt(request.ImportedTransactionScheme.DescriptionIndex).Value.ToString(),
-                CreateDate = TimeService.Now,
-                Amount = decimal.Parse(t.ElementAt(request.ImportedTransactionScheme.AmountIndex).Value.ToString()),
-                Status = TransactionStatusEnum.Completed
-            };
-
-            await transactionRepository.CreateAsync(entity);
+                TransactionModel = t,
+                UserId = t.UserId
+            }, cancellationToken);
         }
-
-        
     }
 }

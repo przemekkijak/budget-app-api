@@ -36,7 +36,6 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
         }
 
         var canPerformAction = await IsUserAuthorizedToPerformActionOnBudget(request.UserId, budget, TransactionActionEnum.Write);
-
         if (!canPerformAction)
         {
             return new ExecutionResult(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));

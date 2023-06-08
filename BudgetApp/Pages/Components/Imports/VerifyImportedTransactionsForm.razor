@@ -12,7 +12,7 @@
 @inject NavigationManager NavigationManager
 
 <div>
-    <RadzenButton Text="Save" Click="SaveChanges"/>
+    <RadzenButton Text="Save" Click="ImportTransactions"/>
 
     <RadzenDataGrid
         TItem="TransactionModel"
@@ -146,23 +146,22 @@
         }
     }
 
-    private async Task SaveChanges()
+    private async Task ImportTransactions()
     {
-        var reversedList = ImportedTransactions.ToList();
-        reversedList.Reverse();
-        
-        foreach (var transaction in reversedList)
+        //It is necessary so newest transactions are not created first (with older CreateDate)-
+        var reversedTransactionList = ImportedTransactions.ToList();
+        reversedTransactionList.Reverse();
+
+        await Mediator.Send(new ImportTransactions()
         {
-            await Mediator.Send(new CreateTransaction()
-            {
-                TransactionModel = transaction,
-                UserId = UserId
-            });
-        }
+            Transactions = reversedTransactionList
+        });
         
         //TODO Handle errors, show some success message etc
         NavigationManager.NavigateTo("/");
     }
+
+    #region RowActions
 
     private async Task EditRow(TransactionModel transaction)
     {
@@ -202,4 +201,5 @@
         }
     }
 
+    #endregion
 }
