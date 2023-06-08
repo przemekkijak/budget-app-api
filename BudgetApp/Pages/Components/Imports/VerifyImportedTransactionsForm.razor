@@ -3,7 +3,9 @@
 @using BudgetApp.Core
 @using BudgetApp.Core.Features.Transactions.Commands
 @using BudgetApp.Core.Features.Transactions.Helpers
+@using BudgetApp.Core.Features.Transactions.Queries
 @using BudgetApp.Core.Features.Users.Models
+@using BudgetApp.Core.Services
 @using BudgetApp.Domain.Enums
 @using BudgetApp.Infrastructure
 @using MediatR
@@ -47,6 +49,25 @@
                 </EditTemplate>
                 <Template Context="transaction">
                     <span>@transaction.PaymentDate.ToString("yyyy-MM-dd")</span>
+                </Template>
+            </RadzenDataGridColumn>
+
+            @* ShouldBeAdded (duplicated hash case) *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="ShouldBeAdded" Title="Should be imported">
+                <EditTemplate Context="transaction">
+                    <InputCheckbox @bind-Value="transaction.ShouldBeAdded"/>
+                </EditTemplate>
+                <Template Context="transaction">
+                    @if (transaction.ShouldBeAdded)
+                    {
+                        <span>@transaction.ShouldBeAdded.ToString()</span>
+                    }
+                    else
+                    {
+                        <span title="This transaction has been marked as duplicate. An import with identical data has already been found in the database. To ignore this message, please edit the transaction and mark it as valid for import.">
+                            @transaction.ShouldBeAdded.ToString() (?)
+                        </span>
+                    }
                 </Template>
             </RadzenDataGridColumn>
 
@@ -99,16 +120,22 @@
         if (authState.User.Identity?.IsAuthenticated ?? false)
         {
             UserId = authState.User.GetUserId();
-            ConvertRowsIntoTransactions();
+            await ConvertRowsIntoTransactions();
         }
     }
 
-    private void ConvertRowsIntoTransactions()
+    private async Task ConvertRowsIntoTransactions()
     {
         var results = new List<TransactionModel>();
+        var budgetTransactions = await Mediator.Send(new GetImportedTransactionHashList()
+        {
+            BudgetId = BudgetId
+        });
 
         foreach (var i in ImportedRows)
         {
+            var transactionHash = GetTransactionHash(i);
+
             var amount = GetElementFromTransactionScheme(i, TransactionScheme.AmountIndex);
             var description = GetElementFromTransactionScheme(i, TransactionScheme.DescriptionIndex);
             var paymentDate = DateTime.Parse(GetElementFromTransactionScheme(i, TransactionScheme.PaymentDateIndex));
@@ -123,13 +150,23 @@
                 PaymentDate = paymentDate,
                 CreateDate = TimeService.Now,
                 UpdateDate = TimeService.Now,
-                UserId = UserId
+                UserId = UserId,
+                ImportHash = transactionHash,
+                IsHashDuplicated = budgetTransactions.Contains(transactionHash)
             };
+
+            transaction.ShouldBeAdded = !transaction.IsHashDuplicated;
 
             results.Add(transaction);
         }
 
         ImportedTransactions = results;
+    }
+
+    private string GetTransactionHash(ExpandoObject importedRow)
+    {
+        var rowValues = string.Join(',', importedRow.Select(a => a.Value));
+        return HashService.GetSHA256Hash(rowValues);
     }
 
     private string GetElementFromTransactionScheme(ExpandoObject importedRow, int elementIndex)
@@ -148,7 +185,7 @@
 
     private async Task ImportTransactions()
     {
-        //It is necessary so newest transactions are not created first (with older CreateDate)-
+    //It is necessary so newest transactions are not created first (with older CreateDate)-
         var reversedTransactionList = ImportedTransactions.ToList();
         reversedTransactionList.Reverse();
 
@@ -156,8 +193,8 @@
         {
             Transactions = reversedTransactionList
         });
-        
-        //TODO Handle errors, show some success message etc
+
+    //TODO Handle errors, show some success message etc
         NavigationManager.NavigateTo("/");
     }
 
@@ -202,4 +239,5 @@
     }
 
     #endregion
+
 }

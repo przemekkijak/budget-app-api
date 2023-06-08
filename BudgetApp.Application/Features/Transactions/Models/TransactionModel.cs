@@ -28,4 +28,10 @@ public class TransactionModel
     public DateTime CreateDate { get; set; }
     
     public DateTime UpdateDate { get; set; }
+
+    public string ImportHash { get; set; }
+
+    public bool IsHashDuplicated { get; set; }
+
+    public bool ShouldBeAdded { get; set; } = true;
 }

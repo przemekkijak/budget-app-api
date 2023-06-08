@@ -17,4 +17,13 @@ public class TransactionRepository : BaseRepository<TransactionEntity>, ITransac
             .SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId && a.IsDeleted == false && a.CreateDate >= startDate && a.CreateDate <= endDate))
             .ToList();
     }
+
+    public async Task<HashSet<string>> GetHashListForBudget(int budgetId)
+    {
+        using var con = CreateConnection();
+        return (await con
+                .SelectAsync<TransactionEntity>(a => a.BudgetId == budgetId && a.ImportHash != null))
+            .Select(a => a.ImportHash)
+            .ToHashSet()!;
+    }
 }

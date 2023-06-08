@@ -215,8 +215,7 @@
         
         await TransactionsGrid.InsertRow(TransactionToInsert);
     }
-    
-    
+
     private async Task OnCreateRow(TransactionModel transaction)
     {
         transaction.BankAccount = BankAccounts.Single(a => a.Id == transaction.BankAccountId);
@@ -296,8 +295,9 @@
                 });
 
                 await ReloadBankAccountSummary();
-                await TransactionsGrid.Reload();
             }
+            
+            await TransactionsGrid.Reload();
         }
     }
     

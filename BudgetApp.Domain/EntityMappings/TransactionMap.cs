@@ -20,5 +20,6 @@ public class TransactionMap : DommelEntityMap<TransactionEntity>
         Map(x => x.IsDeleted).ToColumn("is_deleted");
         Map(x => x.BankAccountId).ToColumn("bank_account_id");
         Map(x => x.PaymentDate).ToColumn("payment_date");
+        Map(x => x.ImportHash).ToColumn("import_hash");
     }
 }

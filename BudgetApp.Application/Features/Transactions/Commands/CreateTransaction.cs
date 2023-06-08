@@ -52,7 +52,8 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now,
             IsDeleted = false,
-            BankAccountId = request.TransactionModel.BankAccountId
+            BankAccountId = request.TransactionModel.BankAccountId,
+            ImportHash = request.TransactionModel.ImportHash
         };
 
         await transactionRepository.CreateAsync(transactionEntity);
