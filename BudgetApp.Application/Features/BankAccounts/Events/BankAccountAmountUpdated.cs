@@ -1,5 +1,5 @@
 using BudgetApp.Core.Notifications;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace BudgetApp.Core.Features.BankAccounts.Events;

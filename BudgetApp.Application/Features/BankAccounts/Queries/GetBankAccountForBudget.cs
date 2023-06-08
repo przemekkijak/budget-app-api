@@ -1,6 +1,6 @@
 using AutoMapper;
 using BudgetApp.Core.Features.BankAccounts.Models;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace BudgetApp.Core.Features.BankAccounts.Queries;

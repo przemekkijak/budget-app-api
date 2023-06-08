@@ -1,7 +1,7 @@
 using BCrypt;
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Features.Users.Models;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace BudgetApp.Core.Features.Users.Commands;

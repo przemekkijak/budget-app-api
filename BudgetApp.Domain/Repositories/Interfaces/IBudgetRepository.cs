@@ -1,8 +1,6 @@
-﻿
-using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Repositories.Interfaces;
+﻿using BudgetApp.Domain.Entities;
 
-namespace BudgetApp.Domain.Interfaces.Repositories;
+namespace BudgetApp.Domain.Repositories.Interfaces;
 
 public interface IBudgetRepository : IBaseRepository<BudgetEntity>
 {

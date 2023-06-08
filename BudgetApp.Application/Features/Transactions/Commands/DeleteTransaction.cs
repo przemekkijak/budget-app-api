@@ -1,8 +1,9 @@
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Notifications;
+using BudgetApp.Core.Services;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;

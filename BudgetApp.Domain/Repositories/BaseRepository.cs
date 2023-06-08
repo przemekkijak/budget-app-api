@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Interfaces.Repositories;
 using BudgetApp.Domain.Repositories.Interfaces;
 using Dommel;
 using Npgsql;

@@ -1,7 +1,8 @@
 using BudgetApp.Core.Common;
 using BudgetApp.Core.Features.Budgets.Models;
+using BudgetApp.Core.Services;
 using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace BudgetApp.Core.Features.Budgets.Commands;

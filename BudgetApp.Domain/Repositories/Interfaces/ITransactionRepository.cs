@@ -1,7 +1,6 @@
 ﻿using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Repositories.Interfaces;
 
-namespace BudgetApp.Domain.Interfaces.Repositories;
+namespace BudgetApp.Domain.Repositories.Interfaces;
 
 public interface ITransactionRepository : IBaseRepository<TransactionEntity>
 {

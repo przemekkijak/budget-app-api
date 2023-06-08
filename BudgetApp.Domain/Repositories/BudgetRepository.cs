@@ -1,5 +1,5 @@
 ﻿using BudgetApp.Domain.Entities;
-using BudgetApp.Domain.Interfaces.Repositories;
+using BudgetApp.Domain.Repositories.Interfaces;
 using Dommel;
 
 namespace BudgetApp.Domain.Repositories;
