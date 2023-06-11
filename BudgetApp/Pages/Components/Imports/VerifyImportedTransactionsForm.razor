@@ -185,13 +185,13 @@
 
     private async Task ImportTransactions()
     {
-    //It is necessary so newest transactions are not created first (with older CreateDate)-
-        var reversedTransactionList = ImportedTransactions.ToList();
-        reversedTransactionList.Reverse();
+        //It is necessary to reverse list, so newest transactions are not created first (with older CreateDate)
+        var nonExcludedTransactions = ImportedTransactions.Where(a => a.ShouldBeAdded).ToList();
+        nonExcludedTransactions.Reverse();
 
         await Mediator.Send(new ImportTransactions()
         {
-            Transactions = reversedTransactionList
+            Transactions = nonExcludedTransactions
         });
 
     //TODO Handle errors, show some success message etc
