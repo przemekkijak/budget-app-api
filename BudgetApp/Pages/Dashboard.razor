@@ -14,12 +14,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-4 mb-4">
-                    <BankAccountsSummary BudgetId="DefaultBudgetId.Value" ShouldReload="ShouldReloadBankAccountSummary"></BankAccountsSummary>
+                    <BankAccountsSummary BudgetId="@DefaultBudgetId.Value" ShouldReload="ShouldReloadBankAccountSummary"></BankAccountsSummary>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xl-12">
-                    <TransactionList BudgetId="DefaultBudgetId.Value" TransactionModified="ReloadBankAccountSummary"/>
+                    <TransactionList BudgetId="@DefaultBudgetId.Value" TransactionModified="ReloadBankAccountSummary"/>
                 </div>
             </div>
         </div>
@@ -30,8 +30,10 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
 
-    private int UserId { get; set; }
-
+    [CascadingParameter]
+    public int UserId { get; set; }
+    
+    [CascadingParameter]
     private int? DefaultBudgetId { get; set; }
 
     private bool ShouldReloadBankAccountSummary { get; set; }

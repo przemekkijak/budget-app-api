@@ -1,6 +1,7 @@
 using AutoMapper;
 using BudgetApp.Core.Features.BankAccounts.Models;
 using BudgetApp.Core.Features.Budgets.Models;
+using BudgetApp.Core.Features.ImportTransactions.Models;
 using BudgetApp.Core.Features.Transactions.Models;
 using BudgetApp.Core.Features.Users.Models;
 using BudgetApp.Domain;
@@ -106,6 +107,7 @@ void AddServices()
     builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
     builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
     builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+    builder.Services.AddScoped<IImportTransactionSchemeRepository, ImportTransactionSchemeRepository>();
     
 
     builder.Services.AddTransient<IMediator, Mediator>();
@@ -122,6 +124,7 @@ void ConfigureDapper()
         c.AddMap(new BudgetMap());
         c.AddMap(new TransactionMap());
         c.AddMap(new BankAccountMap());
+        c.AddMap(new ImportTransactionSchemeMap());
         c.ForDommel();
     });
  
@@ -136,10 +139,15 @@ void ConfigureAuth()
 
 MapperConfiguration PrepareAutoMapperConfig()
 {
+    //TODO improve creating maps, should be some internal method to create both ways
+    
     return new MapperConfiguration(cfg => {
         cfg.CreateMap<TransactionEntity, TransactionModel>();
         cfg.CreateMap<UserEntity, UserModel>();
         cfg.CreateMap<BudgetEntity, BudgetModel>();
         cfg.CreateMap<BankAccountEntity, BankAccountModel>();
+        
+        cfg.CreateMap<ImportTransactionSchemeEntity, ImportTransactionSchemeModel>();
+        cfg.CreateMap<ImportTransactionSchemeModel, ImportTransactionSchemeEntity>();
     });
 }

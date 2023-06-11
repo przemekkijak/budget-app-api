@@ -1,7 +1,8 @@
+using BudgetApp.Core.Features.Transactions.Commands;
 using BudgetApp.Core.Features.Transactions.Models;
 using MediatR;
 
-namespace BudgetApp.Core.Features.Transactions.Commands;
+namespace BudgetApp.Core.Features.ImportTransactions.Commands;
 
 public class ImportTransactions : IRequest
 {

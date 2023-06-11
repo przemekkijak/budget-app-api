@@ -1,6 +1,8 @@
 @using BudgetApp.Core.Features.Transactions.Models
 @using System.Dynamic
 @using BudgetApp.Core
+@using BudgetApp.Core.Features.ImportTransactions.Commands
+@using BudgetApp.Core.Features.ImportTransactions.Models
 @using BudgetApp.Core.Features.Transactions.Commands
 @using BudgetApp.Core.Features.Transactions.Helpers
 @using BudgetApp.Core.Features.Transactions.Queries
@@ -101,7 +103,7 @@
     public int BudgetId { get; init; }
 
     [Parameter]
-    public ImportedTransactionScheme TransactionScheme { get; init; }
+    public ImportTransactionSchemeModel ImportTransactionSchemeModel { get; init; }
 
     [Parameter]
     public List<ExpandoObject> ImportedRows { get; set; }
@@ -136,9 +138,9 @@
         {
             var transactionHash = GetTransactionHash(i);
 
-            var amount = GetElementFromTransactionScheme(i, TransactionScheme.AmountIndex);
-            var description = GetElementFromTransactionScheme(i, TransactionScheme.DescriptionIndex);
-            var paymentDate = DateTime.Parse(GetElementFromTransactionScheme(i, TransactionScheme.PaymentDateIndex));
+            var amount = GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.AmountIndex);
+            var description = GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.DescriptionIndex);
+            var paymentDate = DateTime.Parse(GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.PaymentDateIndex));
 
             var transaction = new TransactionModel()
             {
@@ -146,7 +148,7 @@
                 Amount = decimal.Parse(amount),
                 Description = description,
                 Status = TransactionStatusEnum.Completed,
-                BankAccountId = TransactionScheme.BankAccountId,
+                BankAccountId = ImportTransactionSchemeModel.BankAccountId,
                 PaymentDate = paymentDate,
                 CreateDate = TimeService.Now,
                 UpdateDate = TimeService.Now,
@@ -185,7 +187,7 @@
 
     private async Task ImportTransactions()
     {
-        //It is necessary to reverse list, so newest transactions are not created first (with older CreateDate)
+    //It is necessary to reverse list, so newest transactions are not created first (with older CreateDate)
         var nonExcludedTransactions = ImportedTransactions.Where(a => a.ShouldBeAdded).ToList();
         nonExcludedTransactions.Reverse();
 
@@ -194,8 +196,21 @@
             Transactions = nonExcludedTransactions
         });
 
+        if (ImportTransactionSchemeModel.SaveTransactionScheme)
+        {
+            await SaveImportTransactionSchemeModel();
+        }
+
     //TODO Handle errors, show some success message etc
         NavigationManager.NavigateTo("/");
+    }
+
+    private async Task SaveImportTransactionSchemeModel()
+    {
+        await Mediator.Send(new CreateImportTransactionScheme()
+        {
+            ImportTransactionSchemeModel = ImportTransactionSchemeModel
+        });
     }
 
     #region RowActions

@@ -5,7 +5,8 @@
 @using BudgetApp.Pages.Components.Imports
 @using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Features.BankAccounts.Queries
-@using BudgetApp.Core.Features.Transactions.Models
+@using BudgetApp.Core.Features.ImportTransactions.Models
+@using BudgetApp.Infrastructure
 @using MediatR
 @inject IMediator Mediator
 
@@ -32,7 +33,7 @@
                 {
                     <ImportedTransactionSchemeForm
                         ExampleTransaction="ImportedRows.First()"
-                        TransactionScheme="TransactionScheme"
+                        ImportTransactionSchemeModel="ImportTransactionSchemeModel"
                         BankAccounts="BankAccounts"
                         TransactionSchemeSaved="TransactionSchemeSaved"/>
                 }
@@ -50,7 +51,7 @@
                     <VerifyImportedTransactionsForm
                         ImportedRows="ImportedRows"
                         BudgetId="BudgetId"
-                        TransactionScheme="TransactionScheme"/>
+                        ImportTransactionSchemeModel="ImportTransactionSchemeModel"/>
                 }
             </RadzenStepsItem>
         </Steps>
@@ -60,16 +61,21 @@
 
 @code {
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
     [Parameter]
     public string BudgetIdParameter { get; set; }
 
+    private int UserId { get; set; }
+    
     private int BudgetId => int.Parse(BudgetIdParameter);
 
     private RadzenSteps steps;
 
-    private List<ExpandoObject> ImportedRows = new List<ExpandoObject>();
+    private List<ExpandoObject> ImportedRows = new();
 
-    private ImportedTransactionScheme TransactionScheme { get; } = new();
+    private ImportTransactionSchemeModel ImportTransactionSchemeModel { get; } = new();
 
     private List<BankAccountModel> BankAccounts { get; set; }
 
@@ -79,10 +85,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        BankAccounts = await Mediator.Send(new GetBankAccountsForBudget()
+        var authState = await AuthState;
+        if (authState.User.Identity?.IsAuthenticated ?? false)
         {
-            BudgetId = BudgetId
-        });
+            UserId = authState.User.GetUserId();
+            ImportTransactionSchemeModel.UserId = UserId;
+        
+            BankAccounts = await Mediator.Send(new GetBankAccountsForBudget()
+            {
+                BudgetId = BudgetId
+            });
+        }
     }
 
     private async Task ProcessImportedCsvFile(InputFileChangeEventArgs e)
@@ -90,6 +103,7 @@
         const string csvType = "text/csv";
         if (e.File.ContentType != csvType)
         {
+            //TODO handle error
             return;
         }
 

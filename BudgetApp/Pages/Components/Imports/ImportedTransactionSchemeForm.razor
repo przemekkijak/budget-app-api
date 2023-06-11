@@ -1,5 +1,6 @@
 @using System.Dynamic
 @using BudgetApp.Core.Features.BankAccounts.Models
+@using BudgetApp.Core.Features.ImportTransactions.Models
 @using BudgetApp.Core.Features.Transactions.Commands
 @using BudgetApp.Core.Features.Transactions.Models
 @using MediatR
@@ -9,7 +10,7 @@
 @if (showForm)
 {
     <div style="display: flex; justify-content: center; align-items: center;">
-        <RadzenTemplateForm TItem="ImportedTransactionScheme" Data="@TransactionScheme" Submit="@Submit">
+        <RadzenTemplateForm TItem="ImportTransactionSchemeModel" Data="@ImportTransactionSchemeModel" Submit="@Submit">
             <div class="container">
                 <div class="row">
                     <p>This is one of your imported transactions. Set value for each matching field, those values will be applied for all imported transactions</p>
@@ -19,25 +20,32 @@
                         <RadzenLabel Text="Date"/>
                     </div>
                     <div class="col-md-8">
-                        <RadzenDropDown @bind-Value="TransactionScheme.PaymentDateIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
+                        <RadzenDropDown @bind-Value="ImportTransactionSchemeModel.PaymentDateIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
                     </div>
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Description"/>
                     </div>
                     <div class="col-md-8">
-                        <RadzenDropDown @bind-Value="TransactionScheme.DescriptionIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
+                        <RadzenDropDown @bind-Value="ImportTransactionSchemeModel.DescriptionIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
                     </div>
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Amount"/>
                     </div>
                     <div class="col-md-8">
-                        <RadzenDropDown @bind-Value="TransactionScheme.AmountIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
+                        <RadzenDropDown @bind-Value="ImportTransactionSchemeModel.AmountIndex" Data="@AvailableValues" TextProperty="Value" ValueProperty="Key"/>
                     </div>
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Bank account"/>
                     </div>
                     <div class="col-md-8">
-                        <RadzenDropDown @bind-Value="TransactionScheme.BankAccountId" Data="@BankAccounts" TextProperty="Name" ValueProperty="Id"/>
+                        <RadzenDropDown @bind-Value="ImportTransactionSchemeModel.BankAccountId" Data="@BankAccounts" TextProperty="Name" ValueProperty="Id"/>
+                    </div>
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Save transaction scheme"/>
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenCheckBox @bind-Value="ImportTransactionSchemeModel.SaveTransactionScheme"/>
+                        
                     </div>
                     <br/>
                     <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" Style="width: 30%"/>
@@ -52,20 +60,20 @@
 
     [Parameter]
     public List<BankAccountModel> BankAccounts { get; set; }
-    
+
     [Parameter]
-    public ImportedTransactionScheme TransactionScheme { get; init; }
+    public ImportTransactionSchemeModel ImportTransactionSchemeModel { get; init; }
 
     [Parameter]
     public ExpandoObject ExampleTransaction { get; set; }
-    
+
     [Parameter]
     public EventCallback<bool> TransactionSchemeSaved { get; set; }
-    
+
     private Dictionary<int, string> AvailableValues { get; } = new();
 
     private List<string> RequiredValues { get; set; }
-    
+
     private bool showForm;
 
     protected override async Task OnInitializedAsync()
@@ -76,7 +84,6 @@
 
             for (var i = 0; i < ExampleTransaction.Count() - 1; i++)
             {
-                
                 var availableValue = ExampleTransaction.ElementAt(i).Value;
                 if (availableValue != null)
                     AvailableValues[i] = availableValue.ToString() ?? string.Empty;
