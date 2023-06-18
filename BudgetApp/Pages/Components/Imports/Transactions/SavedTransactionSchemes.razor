@@ -1,0 +1,62 @@
+@using MediatR
+@using BudgetApp.Infrastructure
+@using BudgetApp.Core.Features.ImportTransactions.Queries
+@using BudgetApp.Core.Features.ImportTransactions.Models
+@inject IMediator Mediator
+
+@if (ShowView)
+{
+    <div class="m-5">
+        <p>You can use one of your existing settings</p>
+        @foreach (var s in ImportTransactionSchemes)
+        {
+            <RadzenButton Text="@s.Name" Click="@(() => SelectTransactionScheme(s))" />
+        }
+    </div>
+}
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> TransactionSchemeSaved { get; set; }
+    
+    [Parameter]
+    public ImportTransactionSchemeModel ImportTransactionSchemeModel { get; set; }
+
+    private bool ShowView { get; set; }
+
+    private List<ImportTransactionSchemeModel> ImportTransactionSchemes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState.User.Identity?.IsAuthenticated ?? false)
+        {
+            var userId = authState.User.GetUserId();
+            
+            ImportTransactionSchemes = await Mediator.Send(new GetImportTransactionSchemes()
+            {
+                UserId = userId
+            });
+
+            if (ImportTransactionSchemes.Any())
+                ShowView = true;
+        }
+    }
+
+    private async Task SelectTransactionScheme(ImportTransactionSchemeModel model)
+    {
+        ImportTransactionSchemeModel.Name = model.Name;
+        ImportTransactionSchemeModel.AmountIndex = model.AmountIndex;
+        ImportTransactionSchemeModel.RecipientIndex = model.RecipientIndex;
+        ImportTransactionSchemeModel.DescriptionIndex = model.DescriptionIndex;
+        ImportTransactionSchemeModel.PaymentDateIndex = model.PaymentDateIndex;
+        ImportTransactionSchemeModel.BankAccountId = model.BankAccountId;
+        ImportTransactionSchemeModel.UserId = model.UserId;
+        
+        await TransactionSchemeSaved.InvokeAsync();
+    }
+}

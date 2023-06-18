@@ -26,7 +26,7 @@
         <Columns>
 
             @* Amount *@
-            <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Kwota">
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Amount" Title="Amount">
                 <EditTemplate Context="transaction">
                     <RadzenNumeric TValue="decimal" @bind-Value="transaction.Amount" Style="width: 50%;"/>
                 </EditTemplate>
@@ -37,15 +37,22 @@
                 </Template>
             </RadzenDataGridColumn>
 
+            @* Recipient *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Recipient" Title="Recipient">
+                <EditTemplate Context="transaction">
+                    <RadzenTextBox @bind-Value="transaction.Recipient" Style="width: 70%;"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+
             @* Description *@
-            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Opis">
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description">
                 <EditTemplate Context="transaction">
                     <RadzenTextBox @bind-Value="transaction.Description" Style="width: 70%;"/>
                 </EditTemplate>
             </RadzenDataGridColumn>
 
             @* PaymentDate *@
-            <RadzenDataGridColumn TItem="TransactionModel" Property="PaymentDate" Title="Data płatności">
+            <RadzenDataGridColumn TItem="TransactionModel" Property="PaymentDate" Title="Payment date">
                 <EditTemplate Context="transaction">
                     <RadzenDatePicker @bind-Value="transaction.PaymentDate"/>
                 </EditTemplate>
@@ -141,11 +148,13 @@
             var amount = GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.AmountIndex);
             var description = GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.DescriptionIndex);
             var paymentDate = DateTime.Parse(GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.PaymentDateIndex));
+            var recipient = GetElementFromTransactionScheme(i, ImportTransactionSchemeModel.RecipientIndex);
 
             var transaction = new TransactionModel()
             {
                 BudgetId = BudgetId,
                 Amount = decimal.Parse(amount),
+                Recipient = recipient,
                 Description = description,
                 Status = TransactionStatusEnum.Completed,
                 BankAccountId = ImportTransactionSchemeModel.BankAccountId,

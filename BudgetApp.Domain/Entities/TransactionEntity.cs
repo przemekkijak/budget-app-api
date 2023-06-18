@@ -10,6 +10,8 @@ public class TransactionEntity : EntityBase
 
     public BankAccountEntity BankAccount { get; set; }
 
+    public string Recipient { get; set; }
+
     public decimal Amount { get; set; }
 
     public TransactionStatusEnum Status { get; set; }

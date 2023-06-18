@@ -76,6 +76,13 @@
                 </Template>
             </RadzenDataGridColumn>
 
+            @* Recipient *@
+            <RadzenDataGridColumn TItem="TransactionModel" Property="Recipient" Title="Recipient">
+                <EditTemplate Context="transaction">
+                    <RadzenTextBox @bind-Value="transaction.Recipient" Style="width: 70%;"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            
             @* Description *@
             <RadzenDataGridColumn TItem="TransactionModel" Property="Description" Title="Description">
                 <EditTemplate Context="transaction">

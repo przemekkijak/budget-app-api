@@ -13,8 +13,11 @@ public class ImportTransactionSchemeMap : DommelEntityMap<ImportTransactionSchem
         Map(x => x.UserId).ToColumn("user_id");
         Map(x => x.Name).ToColumn("name");
         Map(x => x.PaymentDateIndex).ToColumn("payment_date_index");
+        Map(x => x.RecipientIndex).ToColumn("recipient_index");
         Map(x => x.DescriptionIndex).ToColumn("description_index");
         Map(x => x.AmountIndex).ToColumn("amount_index");
         Map(x => x.BankAccountId).ToColumn("bank_account_id");
+        Map(x => x.CreateDate).ToColumn("create_date");
+        Map(x => x.UpdateDate).ToColumn("update_date");
     }
 }

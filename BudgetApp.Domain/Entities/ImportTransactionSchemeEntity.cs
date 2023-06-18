@@ -8,6 +8,8 @@ public class ImportTransactionSchemeEntity : EntityBase
 
     public int PaymentDateIndex { get; set; }
 
+    public int RecipientIndex { get; set; }
+
     public int DescriptionIndex { get; set; }
 
     public int AmountIndex { get; set; }

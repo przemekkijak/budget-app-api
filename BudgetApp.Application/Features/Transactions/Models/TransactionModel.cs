@@ -13,6 +13,8 @@ public class TransactionModel
 
     public BankAccountModel BankAccount { get; set; }
 
+    public string Recipient { get; set; }
+
     public decimal Amount { get; set; }
 
     public string AmountText => $"{Amount} zł";

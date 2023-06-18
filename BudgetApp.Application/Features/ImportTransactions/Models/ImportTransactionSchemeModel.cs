@@ -4,9 +4,11 @@ public class ImportTransactionSchemeModel
 {
     public int UserId { get; set; }
 
-    public string Name { get; set; } = "Default"; //TODO CHANGE!!!
+    public string Name { get; set; }
     
     public int PaymentDateIndex { get; set; }
+
+    public int RecipientIndex { get; set; }
 
     public int DescriptionIndex { get; set; }
 

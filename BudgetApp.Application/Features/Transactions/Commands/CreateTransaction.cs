@@ -48,6 +48,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             Amount = request.TransactionModel.Amount,
             UserId = request.UserId,
             Status = request.TransactionModel.Status,
+            Recipient = request.TransactionModel.Recipient,
             Description = request.TransactionModel.Description,
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now,

@@ -2,10 +2,10 @@
 
 @using BudgetApp.Core.Services
 @using System.Dynamic
-@using BudgetApp.Pages.Components.Imports
 @using BudgetApp.Core.Features.BankAccounts.Models
 @using BudgetApp.Core.Features.BankAccounts.Queries
 @using BudgetApp.Core.Features.ImportTransactions.Models
+@using BudgetApp.Pages.Components.Imports.Transactions
 @using BudgetApp.Infrastructure
 @using MediatR
 @inject IMediator Mediator
@@ -28,10 +28,16 @@
 
             @* Select headers step *@
             <RadzenStepsItem Text="Select fields" Disabled="!IsFileUploaded">
-                <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3" class="rz-my-6">2. Select matching fields</RadzenText>
                 @if (IsFileUploaded && ImportedRows.Any())
                 {
-                    <ImportedTransactionSchemeForm
+                    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3" class="rz-my-6">2. Select matching fields</RadzenText>
+
+                    @* Display saved transaction schemes *@
+                    <SavedTransactionSchemes
+                        ImportTransactionSchemeModel="ImportTransactionSchemeModel"
+                        TransactionSchemeSaved="TransactionSchemeSaved"/>
+                    
+                    <ImportTransactionSchemeForm
                         ExampleTransaction="ImportedRows.First()"
                         ImportTransactionSchemeModel="ImportTransactionSchemeModel"
                         BankAccounts="BankAccounts"
@@ -75,7 +81,7 @@
 
     private List<ExpandoObject> ImportedRows = new();
 
-    private ImportTransactionSchemeModel ImportTransactionSchemeModel { get; } = new();
+    private ImportTransactionSchemeModel ImportTransactionSchemeModel { get; set; } = new();
 
     private List<BankAccountModel> BankAccounts { get; set; }
 
@@ -113,6 +119,7 @@
         await NextStep();
     }
 
+    //It is used by internal components - do not remove
     private async Task TransactionSchemeSaved()
     {
         IsTransactionSchemeSaved = true;
