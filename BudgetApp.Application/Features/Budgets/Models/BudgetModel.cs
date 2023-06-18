@@ -1,7 +1,4 @@
-﻿using BudgetApp.Core.Features.BankAccounts.Models;
-using BudgetApp.Core.Features.Transactions.Models;
-
-namespace BudgetApp.Core.Features.Budgets.Models;
+﻿namespace BudgetApp.Core.Features.Budgets.Models;
 
 public class BudgetModel
 {
