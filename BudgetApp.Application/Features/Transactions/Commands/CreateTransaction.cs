@@ -50,6 +50,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             Status = request.TransactionModel.Status,
             Recipient = request.TransactionModel.Recipient,
             Description = request.TransactionModel.Description,
+            PaymentDate = request.TransactionModel.PaymentDate,
             CreateDate = TimeService.Now,
             UpdateDate = TimeService.Now,
             IsDeleted = false,
