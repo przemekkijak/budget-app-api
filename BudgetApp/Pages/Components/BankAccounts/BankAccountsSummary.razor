@@ -11,8 +11,8 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Current Amount</th>
-                    <th>Upcoming payments</th>
+                    <th>Current</th>
+                    <th>Upcoming</th>
                     <th>End of the month</th>
                 </tr>
             </thead>
@@ -28,6 +28,8 @@
                 }
                 <tr>
                     <td><strong>Total:</strong></td>
+                    <td></td>
+                    <td></td>
                     <td><strong>@BankAccounts.Sum(a => a.Amount) zł</strong></td>
                 </tr>
             </tbody>
