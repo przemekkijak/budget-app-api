@@ -9,7 +9,7 @@ namespace BudgetApp.Core.Features.Users.Commands;
 
 public class RegisterUserCommand : IRequest
 {
-    public User User { get; set; }
+    public LoginModel User { get; set; }
 }
 
 public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>

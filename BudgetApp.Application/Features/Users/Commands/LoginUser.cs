@@ -8,7 +8,7 @@ namespace BudgetApp.Core.Features.Users.Commands;
 
 public class LoginUserCommand : IRequest<ExecutionResult<LoginResultModel>>
 {
-    public User User { get; init; }
+    public LoginModel User { get; init; }
 }
 
 public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, ExecutionResult<LoginResultModel>>
@@ -35,11 +35,14 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
             return new ExecutionResult<LoginResultModel>(new ErrorInfo(ErrorCode.LoginError, MessageCode.InvalidEmailOrPassword));
         }
 
-        await mediator.Send(new SignUserTokenCommand
+        var token = await mediator.Send(new SignUserTokenCommand
         {
             UserEntity = userEntity
         }, cancellationToken);
         
-        return new ExecutionResult<LoginResultModel>();
+        return new ExecutionResult<LoginResultModel>(new LoginResultModel()
+        {
+            Token = token
+        });
     }
 }

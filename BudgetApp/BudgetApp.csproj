@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\BudgetApp.Application\BudgetApp.Application.csproj" />
       <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
     </ItemGroup>

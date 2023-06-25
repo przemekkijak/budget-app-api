@@ -1,6 +1,6 @@
 ﻿namespace BudgetApp.Core.Features.Users.Models;
 
-public class User
+public class LoginModel
 {
     public string Email { get; set; }
 
