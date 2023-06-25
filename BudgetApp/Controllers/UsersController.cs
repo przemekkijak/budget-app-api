@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BudgetApp.Controllers;
 
 [Controller]
+[Route("api/users")]
 public class UsersController : ApiControllerBase
 {
     private readonly IMediator mediator;
