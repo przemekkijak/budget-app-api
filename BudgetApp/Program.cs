@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using BudgetApp.Core.Features.BankAccounts.Models;
 using BudgetApp.Core.Features.Budgets.Models;
@@ -13,13 +14,13 @@ using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ConfigureAuth();
 ConfigureDapper();
 AddServices();
 
@@ -39,6 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -58,8 +60,8 @@ void AddServices()
     builder.Services.AddSingleton(appSettings);
     
     //Auth
-    ConfigureAuth();
-    builder.Services.AddAuthorization();
+    ConfigureAuth(appSettings);
+    builder.Services.AddAuthorization(_ => { });
 
     //Base services
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -125,11 +127,27 @@ void ConfigureDapper()
  
 }
 
-void ConfigureAuth()
+void ConfigureAuth(AppSettings appSettings)
 {
-    builder.Services
-        .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidIssuer = appSettings.TokenIssuer,
+
+                ValidateAudience = true,
+                ValidAudience = appSettings.TokenIssuer,
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey)),
+
+                ValidateLifetime = true,
+                RequireExpirationTime = true,
+            };
+        });
 }
 
 MapperConfiguration PrepareAutoMapperConfig()

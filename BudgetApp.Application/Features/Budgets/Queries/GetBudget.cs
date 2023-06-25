@@ -7,13 +7,13 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Budgets.Queries;
 
-public class GetBudget : IRequest<ExecutionResult<BudgetModel>>
+public class GetBudget : IRequest<ExecutionResult<BudgetModel?>>
 {
     public int UserId { get; init; }
     public int? BudgetId { get; init; }
 }
 
-public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<BudgetModel>>
+public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<BudgetModel?>>
 {
     private readonly IBudgetRepository budgetRepository;
     private readonly IMapper mapper;
@@ -24,7 +24,7 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
         this.mapper = mapper;
     }
     
-    public async Task<ExecutionResult<BudgetModel>> Handle(GetBudget request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult<BudgetModel?>> Handle(GetBudget request, CancellationToken cancellationToken)
     {
         BudgetEntity? budget;
         
@@ -34,7 +34,7 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
             if (budget is null)
             {
                 //TODO handle error
-                return new ExecutionResult<BudgetModel>();
+                return new ExecutionResult<BudgetModel?>();
             }
         }
         else
@@ -45,9 +45,9 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
         if (budget is not null)
         {
             var budgetModel = mapper.Map<BudgetModel>(budget);
-            return new ExecutionResult<BudgetModel>(budgetModel);
+            return new ExecutionResult<BudgetModel?>(budgetModel);
         }
 
-        return new ExecutionResult<BudgetModel>();
+        return new ExecutionResult<BudgetModel?>();
     }
 }

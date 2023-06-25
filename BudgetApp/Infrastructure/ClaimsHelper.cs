@@ -7,7 +7,7 @@ namespace BudgetApp.Infrastructure
     {
         private const string ZeroValue = "0";
 
-        private static string GetClaim(this ClaimsPrincipal claimsPrincipal, string claimType)
+        private static string? GetClaim(this ClaimsPrincipal claimsPrincipal, string claimType)
         {
             return claimsPrincipal.Claims.FirstOrDefault(x => x.Type == claimType)?.Value;
         }

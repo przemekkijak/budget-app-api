@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetApp.Controllers;
 
+[Controller]
 public class UsersController : ApiControllerBase
 {
     private readonly IMediator mediator;

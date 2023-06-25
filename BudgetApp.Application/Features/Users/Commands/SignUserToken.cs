@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BudgetApp.Core.Common;
+using BudgetApp.Core.Services;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Entities;
 using MediatR;
@@ -17,12 +18,10 @@ public class SignUserTokenCommand : IRequest<string>
 
 public class SignUserTokenCommandHandler : IRequestHandler<SignUserTokenCommand, string>
 {
-    private readonly IHttpContextAccessor httpContextAccessor;
     private readonly AppSettings appSettings;
 
     public SignUserTokenCommandHandler(IHttpContextAccessor httpContextAccessor, AppSettings appSettings)
     {
-        this.httpContextAccessor = httpContextAccessor;
         this.appSettings = appSettings;
     }
 
@@ -33,18 +32,19 @@ public class SignUserTokenCommandHandler : IRequestHandler<SignUserTokenCommand,
             new Claim(ClaimTypes.Email, request.UserEntity.Email),
             new Claim(CustomClaimTypes.Id, request.UserEntity.Id.ToString())
         };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.TokenSecretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
+        
+        var tokenLifetime = TimeSpan.FromDays(7);
+        
+        var jwt = new JwtSecurityToken(
             issuer: appSettings.TokenIssuer,
-            audience: appSettings.TokenSigningKey,
+            audience: appSettings.TokenIssuer,
+            notBefore: TimeService.Now,
             claims: userClaims,
-            expires: DateTime.UtcNow.AddDays(7),
-            signingCredentials: creds
-        );
+            expires: TimeService.Now.Add(tokenLifetime),
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey)),
+                SecurityAlgorithms.HmacSha256Signature));
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 }
