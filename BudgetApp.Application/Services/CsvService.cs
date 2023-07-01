@@ -1,13 +1,12 @@
 using System.Dynamic;
 using System.Globalization;
 using CsvHelper;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace BudgetApp.Core.Services;
 
 public static class CsvService
 {
-    public static async Task<string> ConvertFileToBase64(IBrowserFile file)
+    /*public static async Task<string> ConvertFileToBase64(IBrowserFile file)
     {
         using (var ms = new MemoryStream())
         {
@@ -37,5 +36,5 @@ public static class CsvService
         }
 
         return results;
-    }
+    }*/
 }

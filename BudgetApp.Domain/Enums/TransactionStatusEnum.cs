@@ -2,7 +2,7 @@
 
 public enum TransactionStatusEnum
 {
-    New,
-    Completed,
-    Scheduled,
+    New = 0,
+    Completed = 1,
+    Scheduled = 2,
 }
