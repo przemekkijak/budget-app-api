@@ -1,4 +1,4 @@
-﻿namespace BudgetApp.Core.Features.Users.Models;
+﻿namespace BudgetApp.Core.Features.Auth.Models;
 
 public class LoginResultModel
 {

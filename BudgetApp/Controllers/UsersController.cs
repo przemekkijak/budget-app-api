@@ -1,5 +1,5 @@
-using BudgetApp.Core.Features.Users.Commands;
-using BudgetApp.Core.Features.Users.Models;
+using BudgetApp.Core.Features.Auth.Commands;
+using BudgetApp.Core.Features.Auth.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +19,7 @@ public class UsersController : ApiControllerBase
     [HttpPost("login")]
     public async Task<LoginResultModel> Login([FromBody] LoginModel model)
     {
+
         var login = await mediator.Send(new LoginUserCommand()
         {
             User = model

@@ -1,10 +1,10 @@
 using BCrypt;
 using BudgetApp.Core.Common;
-using BudgetApp.Core.Features.Users.Models;
+using BudgetApp.Core.Features.Auth.Models;
 using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
-namespace BudgetApp.Core.Features.Users.Commands;
+namespace BudgetApp.Core.Features.Auth.Commands;
 
 public class LoginUserCommand : IRequest<ExecutionResult<LoginResultModel>>
 {

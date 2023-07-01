@@ -24,7 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Users\Queries" />
+      <Folder Include="Features\Auth\Queries\" />
+      <Folder Include="Features\Users\" />
     </ItemGroup>
 
     <ItemGroup>

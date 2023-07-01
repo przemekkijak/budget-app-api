@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BudgetApp.Core.Features.Users.Commands;
+namespace BudgetApp.Core.Features.Auth.Commands;
 
 public class SignUserTokenCommand : IRequest<string>
 {

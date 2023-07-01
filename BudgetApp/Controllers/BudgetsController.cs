@@ -8,6 +8,7 @@ namespace BudgetApp.Controllers;
 
 [Authorize]
 [Controller]
+[Route("api/budgets")]
 public class BudgetsController : ApiControllerBase
 {
     private readonly IMediator mediator;

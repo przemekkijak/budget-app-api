@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
-namespace BudgetApp.Core.Features.Users.Commands;
+namespace BudgetApp.Core.Features.Auth.Commands;
 
 public class LogoutUserCommand : IRequest
 {

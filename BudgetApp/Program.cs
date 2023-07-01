@@ -1,10 +1,10 @@
 using System.Text;
 using AutoMapper;
+using BudgetApp.Core.Features.Auth.Models;
 using BudgetApp.Core.Features.BankAccounts.Models;
 using BudgetApp.Core.Features.Budgets.Models;
 using BudgetApp.Core.Features.ImportTransactions.Models;
 using BudgetApp.Core.Features.Transactions.Models;
-using BudgetApp.Core.Features.Users.Models;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.EntityMappings;
@@ -29,6 +29,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsOptionsBuilder =>
+    {
+        corsOptionsBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,6 +49,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -49,10 +61,6 @@ app.Run();
 
 void AddServices()
 {
-    //Blazor
-    builder.Services.AddRazorPages();
-    builder.Services.AddServerSideBlazor();
-
     //AppSettings
     var appSettingsSection = builder.Configuration.GetSection("AppSettings");
     builder.Services.Configure<AppSettings>(appSettingsSection);

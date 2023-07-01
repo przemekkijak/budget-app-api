@@ -1,11 +1,11 @@
 using BCrypt;
-using BudgetApp.Core.Features.Users.Models;
+using BudgetApp.Core.Features.Auth.Models;
 using BudgetApp.Core.Services;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 
-namespace BudgetApp.Core.Features.Users.Commands;
+namespace BudgetApp.Core.Features.Auth.Commands;
 
 public class RegisterUserCommand : IRequest
 {
