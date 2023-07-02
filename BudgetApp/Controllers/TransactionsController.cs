@@ -1,3 +1,4 @@
+using BudgetApp.Core.Features.Transactions.Commands;
 using BudgetApp.Core.Features.Transactions.Models;
 using BudgetApp.Core.Features.Transactions.Queries;
 using MediatR;
@@ -25,6 +26,16 @@ public class TransactionsController : ApiControllerBase
         {
             BudgetId = budgetId,
             CurrentMonthOnly = false
+        });
+    }
+
+    [HttpPost]
+    public async Task CreateTransaction([FromBody] TransactionModel model)
+    {
+        await mediator.Send(new CreateTransaction()
+        {
+            TransactionModel = model,
+            UserId = UserId
         });
     }
 }
