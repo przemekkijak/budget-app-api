@@ -42,6 +42,16 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             return new ExecutionResult(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
 
+        var existing = await transactionRepository.GetByIdAsync(request.TransactionModel.Id);
+        if (existing is not null)
+        {
+            return await mediator.Send(new UpdateTransaction()
+            {
+                TransactionModel = request.TransactionModel,
+                UserId = request.UserId
+            }, cancellationToken);
+        }
+
         var transactionEntity = new TransactionEntity
         {
             BudgetId = request.TransactionModel.BudgetId,

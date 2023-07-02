@@ -10,6 +10,7 @@ using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.EntityMappings;
 using BudgetApp.Domain.Repositories;
 using BudgetApp.Domain.Repositories.Interfaces;
+using BudgetApp.Infrastructure.DapperUtcDate;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
@@ -144,6 +145,7 @@ void ConfigureDapper()
         c.ForDommel();
     });
  
+    SqlMapper.AddTypeHandler(new DapperUtcDateTypeInterceptor());
 }
 
 void ConfigureAuth(AppSettings appSettings)

@@ -88,6 +88,7 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
         transaction.Description = request.TransactionModel.Description;
         transaction.Amount = request.TransactionModel.Amount;
         transaction.Status = request.TransactionModel.Status;
+        
         transaction.UpdateDate = TimeService.Now;
 
         var update = await transactionRepository.UpdateAsync(transaction);
