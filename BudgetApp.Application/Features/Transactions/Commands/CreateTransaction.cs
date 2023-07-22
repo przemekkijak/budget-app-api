@@ -17,20 +17,20 @@ public class CreateTransaction : IRequest<ExecutionResult>
 
 public class CreateTransactionHandler : IRequestHandler<CreateTransaction, ExecutionResult>
 {
-    private readonly IBudgetRepository budgetRepository;
-    private readonly ITransactionRepository transactionRepository;
-    private readonly IMediator mediator;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IMediator _mediator;
 
     public CreateTransactionHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator)
     {
-        this.budgetRepository = budgetRepository;
-        this.transactionRepository = transactionRepository;
-        this.mediator = mediator;
+        _budgetRepository = budgetRepository;
+        _transactionRepository = transactionRepository;
+        _mediator = mediator;
     }
     
     public async Task<ExecutionResult> Handle(CreateTransaction request, CancellationToken cancellationToken)
     {
-        var budget = await budgetRepository.GetByIdAsync(request.TransactionModel.BudgetId);
+        var budget = await _budgetRepository.GetByIdAsync(request.TransactionModel.BudgetId);
         if (budget is null)
         {
             return new ExecutionResult(new ErrorInfo(ErrorCode.BudgetError, MessageCode.BudgetNotFound));
@@ -42,10 +42,10 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             return new ExecutionResult(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
 
-        var existing = await transactionRepository.GetByIdAsync(request.TransactionModel.Id);
+        var existing = await _transactionRepository.GetByIdAsync(request.TransactionModel.Id);
         if (existing is not null)
         {
-            return await mediator.Send(new UpdateTransaction()
+            return await _mediator.Send(new UpdateTransaction()
             {
                 TransactionModel = request.TransactionModel,
                 UserId = request.UserId
@@ -68,9 +68,9 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
             ImportHash = request.TransactionModel.ImportHash
         };
 
-        await transactionRepository.CreateAsync(transactionEntity);
+        await _transactionRepository.CreateAsync(transactionEntity);
 
-        await mediator.Publish(
+        await _mediator.Publish(
             new TransactionAmountChangedNotification(transactionEntity.BankAccountId, transactionEntity.Amount), cancellationToken);
         
         return new ExecutionResult();

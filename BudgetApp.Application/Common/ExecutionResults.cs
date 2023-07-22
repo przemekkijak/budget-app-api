@@ -39,15 +39,15 @@ namespace BudgetApp.Core.Common
             Success = result.Success;
         }
 
-        private bool? success;
+        private bool? _success;
 
         /// <summary>
         ///     Indicates if result is successful.
         /// </summary>
         public bool Success
         {
-            get { return success == true || Errors.Count == 0; }
-            set { success = value; }
+            get { return _success == true || Errors.Count == 0; }
+            set { _success = value; }
         }
 
         /// <summary>

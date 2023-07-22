@@ -13,14 +13,14 @@ public class BaseRepository : IBaseRepository
 
 public class BaseRepository<T> : BaseRepository, IBaseRepository<T> where T : EntityBase
 {
-    private readonly AppSettings appSettings;
+    private readonly AppSettings _appSettings;
 
     protected BaseRepository(AppSettings appSettings)
     {
-        this.appSettings = appSettings;
+        _appSettings = appSettings;
     }
 
-    protected IDbConnection CreateConnection() => new NpgsqlConnection(appSettings.ConnectionString);
+    protected IDbConnection CreateConnection() => new NpgsqlConnection(_appSettings.ConnectionString);
 
     public virtual async Task<T?> GetByIdAsync(int id)
     {

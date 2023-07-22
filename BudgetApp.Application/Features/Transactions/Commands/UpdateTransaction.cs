@@ -17,27 +17,27 @@ public class UpdateTransaction : IRequest<ExecutionResult>
 
 public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, ExecutionResult>
 {
-    private readonly ITransactionRepository transactionRepository;
-    private readonly IBudgetRepository budgetRepository;
-    private readonly IMediator mediator;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IMediator _mediator;
 
     public UpdateTransactionHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository, IMediator mediator)
     {
-        this.transactionRepository = transactionRepository;
-        this.budgetRepository = budgetRepository;
-        this.mediator = mediator;
+        _transactionRepository = transactionRepository;
+        _budgetRepository = budgetRepository;
+        _mediator = mediator;
     }
     
     public async Task<ExecutionResult> Handle(UpdateTransaction request, CancellationToken cancellationToken)
     {
-        var transaction = await transactionRepository.GetByIdAsync(request.TransactionModel.Id);
+        var transaction = await _transactionRepository.GetByIdAsync(request.TransactionModel.Id);
         if (transaction is null)
         {
             //TODO return error
             return new ExecutionResult();
         }
 
-        var budget = await budgetRepository.GetByIdAsync(transaction.BudgetId);
+        var budget = await _budgetRepository.GetByIdAsync(transaction.BudgetId);
         if (budget is null)
         {
             //TODO Log critical - create logging service 
@@ -91,7 +91,7 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
         
         transaction.UpdateDate = TimeService.Now;
 
-        var update = await transactionRepository.UpdateAsync(transaction);
+        var update = await _transactionRepository.UpdateAsync(transaction);
         return new ExecutionResult<bool>(update);
     }
     
@@ -108,6 +108,6 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, Execu
 
     private async Task PublishAmountChangeNotification(int bankAccountId, decimal amount)
     {
-        await mediator.Publish(new TransactionAmountChangedNotification(bankAccountId, amount));
+        await _mediator.Publish(new TransactionAmountChangedNotification(bankAccountId, amount));
     }
 }

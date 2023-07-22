@@ -11,11 +11,11 @@ public class ImportTransactions : IRequest
 
 public class ImportTransactionsHandler : IRequestHandler<ImportTransactions>
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
     public ImportTransactionsHandler(IMediator mediator)
     {
-        this.mediator = mediator;
+        _mediator = mediator;
     }
     
     public async Task Handle(ImportTransactions request, CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ public class ImportTransactionsHandler : IRequestHandler<ImportTransactions>
         //TODO this should be done in transaction
         foreach (var t in request.Transactions)
         {
-            await mediator.Send(new CreateTransaction()
+            await _mediator.Send(new CreateTransaction()
             {
                 TransactionModel = t,
                 UserId = t.UserId

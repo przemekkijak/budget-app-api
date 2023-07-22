@@ -10,15 +10,15 @@ public class GetImportedTransactionHashList : IRequest<HashSet<string>>
 
 public class GetImportedTransactionHashListHandler : IRequestHandler<GetImportedTransactionHashList, HashSet<string>>
 {
-    private readonly ITransactionRepository transactionRepository;
+    private readonly ITransactionRepository _transactionRepository;
 
     public GetImportedTransactionHashListHandler(ITransactionRepository transactionRepository)
     {
-        this.transactionRepository = transactionRepository;
+        _transactionRepository = transactionRepository;
     }
     
     public async Task<HashSet<string>> Handle(GetImportedTransactionHashList request, CancellationToken cancellationToken)
     {
-        return await transactionRepository.GetHashListForBudget(request.BudgetId);
+        return await _transactionRepository.GetHashListForBudget(request.BudgetId);
     }
 }

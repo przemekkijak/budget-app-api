@@ -11,17 +11,17 @@ namespace BudgetApp.Controllers;
 [Route("api/budgets")]
 public class BudgetsController : ApiControllerBase
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
     public BudgetsController(IMediator mediator)
     {
-        this.mediator = mediator;
+        _mediator = mediator;
     }
 
     [HttpGet("")]
     public async Task<BudgetModel> GetDefaultBudget()
     {
-        var budget = await mediator.Send(new GetBudget()
+        var budget = await _mediator.Send(new GetBudget()
         {
             UserId = UserId
         });

@@ -12,17 +12,17 @@ namespace BudgetApp.Controllers;
 [Route("api/transactions")]
 public class TransactionsController : ApiControllerBase
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
     public TransactionsController(IMediator mediator)
     {
-        this.mediator = mediator;
+        _mediator = mediator;
     }
 
     [HttpGet("{budgetId:int}")]
     public async Task<List<TransactionModel>> GetForBudget(int budgetId)
     {
-        return await mediator.Send(new GetTransactionsForBudget()
+        return await _mediator.Send(new GetTransactionsForBudget()
         {
             BudgetId = budgetId,
             CurrentMonthOnly = false
@@ -32,7 +32,7 @@ public class TransactionsController : ApiControllerBase
     [HttpPost]
     public async Task CreateTransaction([FromBody] TransactionModel model)
     {
-        await mediator.Send(new CreateTransaction()
+        await _mediator.Send(new CreateTransaction()
         {
             TransactionModel = model,
             UserId = UserId

@@ -14,24 +14,24 @@ public class CreateImportTransactionScheme : IRequest
 
 public class CreateImportTransactionSchemeHandler : IRequestHandler<CreateImportTransactionScheme>
 {
-    private readonly IImportTransactionSchemeRepository importTransactionSchemeRepository;
-    private readonly IMapper mapper;
+    private readonly IImportTransactionSchemeRepository _importTransactionSchemeRepository;
+    private readonly IMapper _mapper;
 
     public CreateImportTransactionSchemeHandler(IImportTransactionSchemeRepository importTransactionSchemeRepository,
         IMapper mapper)
     {
-        this.importTransactionSchemeRepository = importTransactionSchemeRepository;
-        this.mapper = mapper;
+        _importTransactionSchemeRepository = importTransactionSchemeRepository;
+        _mapper = mapper;
     }
 
     public async Task Handle(CreateImportTransactionScheme request, CancellationToken cancellationToken)
     {
-        var entity = mapper.Map<ImportTransactionSchemeEntity>(request.ImportTransactionSchemeModel);
+        var entity = _mapper.Map<ImportTransactionSchemeEntity>(request.ImportTransactionSchemeModel);
         //TODO-PK test if mapping 
 
         entity.CreateDate = TimeService.Now;
         entity.UpdateDate = TimeService.Now;
 
-        await importTransactionSchemeRepository.CreateAsync(entity);
+        await _importTransactionSchemeRepository.CreateAsync(entity);
     }
 }

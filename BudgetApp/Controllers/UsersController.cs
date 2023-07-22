@@ -9,18 +9,17 @@ namespace BudgetApp.Controllers;
 [Route("api/users")]
 public class UsersController : ApiControllerBase
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
     public UsersController(IMediator mediator)
     {
-        this.mediator = mediator;
+        _mediator = mediator;
     }
 
     [HttpPost("login")]
     public async Task<LoginResultModel> Login([FromBody] LoginModel model)
     {
-
-        var login = await mediator.Send(new LoginUserCommand()
+        var login = await _mediator.Send(new LoginUserCommand()
         {
             User = model
         });

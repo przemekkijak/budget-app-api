@@ -12,18 +12,18 @@ public class GetBankAccountsForBudget : IRequest<List<BankAccountModel>>
 
 public sealed class GetBankAccountsForBudgetHandler : IRequestHandler<GetBankAccountsForBudget, List<BankAccountModel>>
 {
-    private readonly IBankAccountRepository bankAccountRepository;
-    private readonly IMapper mapper;
+    private readonly IBankAccountRepository _bankAccountRepository;
+    private readonly IMapper _mapper;
 
     public GetBankAccountsForBudgetHandler(IBankAccountRepository bankAccountRepository, IMapper mapper)
     {
-        this.bankAccountRepository = bankAccountRepository;
-        this.mapper = mapper;
+        _bankAccountRepository = bankAccountRepository;
+        _mapper = mapper;
     }
     
     public async Task<List<BankAccountModel>> Handle(GetBankAccountsForBudget request, CancellationToken cancellationToken)
     {
-        var bankAccounts = await bankAccountRepository.GetForBudget(request.BudgetId);
-        return bankAccounts.Select(a => mapper.Map<BankAccountModel>(a)).ToList();
+        var bankAccounts = await _bankAccountRepository.GetForBudget(request.BudgetId);
+        return bankAccounts.Select(a => _mapper.Map<BankAccountModel>(a)).ToList();
     }
 }

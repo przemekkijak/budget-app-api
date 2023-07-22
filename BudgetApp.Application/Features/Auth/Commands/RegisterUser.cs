@@ -14,13 +14,13 @@ public class RegisterUserCommand : IRequest
 
 public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
 {
-    private readonly IUserRepository userRepository;
-    private readonly IMediator mediator;
+    private readonly IUserRepository _userRepository;
+    private readonly IMediator _mediator;
 
     public RegisterUserCommandHandler(IUserRepository userRepository, IMediator mediator)
     {
-        this.userRepository = userRepository;
-        this.mediator = mediator;
+        _userRepository = userRepository;
+        _mediator = mediator;
     }
 
     public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -34,9 +34,9 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
             UpdateDate = TimeService.Now
         };
 
-        var createUser = await userRepository.CreateAsync(userEntity);
+        var createUser = await _userRepository.CreateAsync(userEntity);
 
-        await mediator.Send(new SignUserTokenCommand
+        await _mediator.Send(new SignUserTokenCommand
         {
             UserEntity = createUser
         }, cancellationToken);

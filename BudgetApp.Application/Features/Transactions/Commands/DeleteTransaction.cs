@@ -16,29 +16,29 @@ public class DeleteTransaction : IRequest<ExecutionResult>
 
 public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, ExecutionResult>
 {
-    private readonly ITransactionRepository transactionRepository;
-    private readonly IBudgetRepository budgetRepository;
-    private readonly IMediator mediator;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IMediator _mediator;
 
     public DeleteTransactionHandler(
         ITransactionRepository transactionRepository, 
         IBudgetRepository budgetRepository,
         IMediator mediator)
     {
-        this.transactionRepository = transactionRepository;
-        this.budgetRepository = budgetRepository;
-        this.mediator = mediator;
+        _transactionRepository = transactionRepository;
+        _budgetRepository = budgetRepository;
+        _mediator = mediator;
     }
 
     public async Task<ExecutionResult> Handle(DeleteTransaction request, CancellationToken cancellationToken)
     {
-        var transaction = await transactionRepository.GetByIdAsync(request.TransactionId);
+        var transaction = await _transactionRepository.GetByIdAsync(request.TransactionId);
         if (transaction is null)
         {
             return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.TransactionError, MessageCode.TransactionNotFound));
         }
         
-        var budget = await budgetRepository.GetByIdAsync(transaction.BudgetId);
+        var budget = await _budgetRepository.GetByIdAsync(transaction.BudgetId);
         if (budget is null)
         {
             //TODO Log critical - create logging service 
@@ -55,11 +55,11 @@ public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, Execu
 
         transaction.IsDeleted = true;
         transaction.UpdateDate = TimeService.Now;
-        await transactionRepository.UpdateAsync(transaction);
+        await _transactionRepository.UpdateAsync(transaction);
 
         if (transaction.Status == TransactionStatusEnum.Completed)
         {
-            await mediator.Publish(new TransactionAmountChangedNotification(transaction.BankAccountId, transaction.Amount * -1), cancellationToken);
+            await _mediator.Publish(new TransactionAmountChangedNotification(transaction.BankAccountId, transaction.Amount * -1), cancellationToken);
         }
         
         return new ExecutionResult();

@@ -13,19 +13,19 @@ public class GetImportTransactionSchemes : IRequest<List<ImportTransactionScheme
 public class GetImportTransactionSchemesHandler : IRequestHandler<GetImportTransactionSchemes,
         List<ImportTransactionSchemeModel>>
 {
-    private readonly IImportTransactionSchemeRepository importTransactionSchemeRepository;
-    private readonly IMapper mapper;
+    private readonly IImportTransactionSchemeRepository _importTransactionSchemeRepository;
+    private readonly IMapper _mapper;
 
     public GetImportTransactionSchemesHandler(IImportTransactionSchemeRepository importTransactionSchemeRepository,
         IMapper mapper)
     {
-        this.importTransactionSchemeRepository = importTransactionSchemeRepository;
-        this.mapper = mapper;
+        _importTransactionSchemeRepository = importTransactionSchemeRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<ImportTransactionSchemeModel>> Handle(GetImportTransactionSchemes request, CancellationToken cancellationToken)
     {
-        var entities = await importTransactionSchemeRepository.GetForUser(request.UserId);
-        return entities.Select(a => mapper.Map<ImportTransactionSchemeModel>(a)).ToList();
+        var entities = await _importTransactionSchemeRepository.GetForUser(request.UserId);
+        return entities.Select(a => _mapper.Map<ImportTransactionSchemeModel>(a)).ToList();
     }
 }

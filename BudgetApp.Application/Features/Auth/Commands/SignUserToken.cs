@@ -18,11 +18,11 @@ public class SignUserTokenCommand : IRequest<string>
 
 public class SignUserTokenCommandHandler : IRequestHandler<SignUserTokenCommand, string>
 {
-    private readonly AppSettings appSettings;
+    private readonly AppSettings _appSettings;
 
     public SignUserTokenCommandHandler(IHttpContextAccessor httpContextAccessor, AppSettings appSettings)
     {
-        this.appSettings = appSettings;
+        _appSettings = appSettings;
     }
 
     public async Task<string> Handle(SignUserTokenCommand request, CancellationToken cancellationToken)
@@ -36,13 +36,13 @@ public class SignUserTokenCommandHandler : IRequestHandler<SignUserTokenCommand,
         var tokenLifetime = TimeSpan.FromDays(7);
         
         var jwt = new JwtSecurityToken(
-            issuer: appSettings.TokenIssuer,
-            audience: appSettings.TokenIssuer,
+            issuer: _appSettings.TokenIssuer,
+            audience: _appSettings.TokenIssuer,
             notBefore: TimeService.Now,
             claims: userClaims,
             expires: TimeService.Now.Add(tokenLifetime),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.TokenSigningKey)),
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.TokenSigningKey)),
                 SecurityAlgorithms.HmacSha256Signature));
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);

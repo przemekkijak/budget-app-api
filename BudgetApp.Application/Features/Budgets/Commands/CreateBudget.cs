@@ -15,13 +15,13 @@ public class CreateBudget : IRequest<ExecutionResult>
 
 public class CreateBudgetHandler : IRequestHandler<CreateBudget, ExecutionResult>
 {
-    private readonly IBudgetRepository budgetRepository;
+    private readonly IBudgetRepository _budgetRepository;
 
     private const string DefaultBudgetName = "Default";
 
     public CreateBudgetHandler(IBudgetRepository budgetRepository)
     {
-        this.budgetRepository = budgetRepository;
+        _budgetRepository = budgetRepository;
     }
     
     public async Task<ExecutionResult> Handle(CreateBudget request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ public class CreateBudgetHandler : IRequestHandler<CreateBudget, ExecutionResult
             UserId = request.UserId
         };
         
-        var existing = await budgetRepository.GetByName(request.UserId, request.Budget.Name);
+        var existing = await _budgetRepository.GetByName(request.UserId, request.Budget.Name);
         if (existing != null)
         {
             return new ExecutionResult<BudgetModel>(new ErrorInfo(ErrorCode.BudgetError,
@@ -49,7 +49,7 @@ public class CreateBudgetHandler : IRequestHandler<CreateBudget, ExecutionResult
             UpdateDate = TimeService.Now
         };
 
-        await budgetRepository.CreateAsync(entity);
+        await _budgetRepository.CreateAsync(entity);
         return new ExecutionResult();
     }
 }

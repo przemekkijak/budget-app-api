@@ -15,13 +15,13 @@ public class GetBudget : IRequest<ExecutionResult<BudgetModel?>>
 
 public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<BudgetModel?>>
 {
-    private readonly IBudgetRepository budgetRepository;
-    private readonly IMapper mapper;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IMapper _mapper;
 
     public GetBudgetHandler(IBudgetRepository budgetRepository, IMapper mapper)
     {
-        this.budgetRepository = budgetRepository;
-        this.mapper = mapper;
+        _budgetRepository = budgetRepository;
+        _mapper = mapper;
     }
     
     public async Task<ExecutionResult<BudgetModel?>> Handle(GetBudget request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
         
         if (request.BudgetId.HasValue)
         {
-            budget = await budgetRepository.GetByIdAsync(request.BudgetId.Value);
+            budget = await _budgetRepository.GetByIdAsync(request.BudgetId.Value);
             if (budget is null)
             {
                 //TODO handle error
@@ -39,12 +39,12 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
         }
         else
         {
-            budget = await budgetRepository.GetDefault(request.UserId);
+            budget = await _budgetRepository.GetDefault(request.UserId);
         }
 
         if (budget is not null)
         {
-            var budgetModel = mapper.Map<BudgetModel>(budget);
+            var budgetModel = _mapper.Map<BudgetModel>(budget);
             return new ExecutionResult<BudgetModel?>(budgetModel);
         }
 

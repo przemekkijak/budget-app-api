@@ -15,15 +15,15 @@ public class GetTransactionsForBudget : IRequest<List<TransactionModel>>
 
 public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsForBudget, List<TransactionModel>>
 {
-    private readonly ITransactionRepository transactionRepository;
-    private readonly IMapper mapper;
-    private readonly IBankAccountRepository bankAccountRepository;
+    private readonly ITransactionRepository _transactionRepository;
+    private readonly IMapper _mapper;
+    private readonly IBankAccountRepository _bankAccountRepository;
 
     public GetTransactionsForBudgetHandler(ITransactionRepository transactionRepository, IMapper mapper, IBankAccountRepository bankAccountRepository)
     {
-        this.transactionRepository = transactionRepository;
-        this.mapper = mapper;
-        this.bankAccountRepository = bankAccountRepository;
+        _transactionRepository = transactionRepository;
+        _mapper = mapper;
+        _bankAccountRepository = bankAccountRepository;
     }
 
     public async Task<List<TransactionModel>> Handle(GetTransactionsForBudget request, CancellationToken cancellationToken)
@@ -38,10 +38,10 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
             endDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
         }
 
-        var transactionEntities = await transactionRepository.GetForBudget(request.BudgetId, startDate, endDate);
+        var transactionEntities = await _transactionRepository.GetForBudget(request.BudgetId, startDate, endDate);
 
         var bankAccountIds = transactionEntities.Select(a => a.BankAccountId).ToHashSet();
-        var bankAccounts = await bankAccountRepository.GetByIds(bankAccountIds);
+        var bankAccounts = await _bankAccountRepository.GetByIds(bankAccountIds);
         var bankAccountsDict = bankAccounts.ToDictionary(a => a.Id, a => a);
 
         foreach (var e in transactionEntities)
@@ -49,7 +49,7 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
             e.BankAccount = bankAccountsDict[e.BankAccountId];
         }
         
-        var transactionModels = transactionEntities.Select(a => mapper.Map<TransactionModel>(a)).ToList();
+        var transactionModels = transactionEntities.Select(a => _mapper.Map<TransactionModel>(a)).ToList();
         return transactionModels;
     }
 }
