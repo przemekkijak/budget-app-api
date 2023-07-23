@@ -47,7 +47,7 @@ public sealed class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, 
         return new ExecutionResult<LoginResultModel>(new LoginResultModel()
         {
             Token = token,
-            User = 
+            User = _mapper.Map<UserModel>(userEntity)
         });
     }
 }
