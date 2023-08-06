@@ -6,14 +6,14 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Queries;
 
-public class GetTransactionsForBudget : IRequest<List<TransactionModel>>
+public class GetTransactionsForBudgetQuery : IRequest<List<TransactionModel>>
 {
     public int BudgetId { get; init; }
 
     public bool CurrentMonthOnly { get; init; }
 }
 
-public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsForBudget, List<TransactionModel>>
+public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsForBudgetQuery, List<TransactionModel>>
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
         _bankAccountRepository = bankAccountRepository;
     }
 
-    public async Task<List<TransactionModel>> Handle(GetTransactionsForBudget request, CancellationToken cancellationToken)
+    public async Task<List<TransactionModel>> Handle(GetTransactionsForBudgetQuery request, CancellationToken cancellationToken)
     {
         DateTime? startDate = null;
         DateTime? endDate = null;
@@ -50,6 +50,6 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
         }
         
         var transactionModels = transactionEntities.Select(a => _mapper.Map<TransactionModel>(a)).ToList();
-        return transactionModels;
+        return transactionModels.OrderByDescending(a => a.PaymentDate).ToList();
     }
 }

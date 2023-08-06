@@ -9,26 +9,26 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;
 
-public class CreateTransaction : IRequest<ExecutionResult>
+public class CreateTransactionCommand : IRequest<ExecutionResult>
 {
     public int UserId { get; init; }
     public TransactionModel TransactionModel { get; init; }
 }
 
-public class CreateTransactionHandler : IRequestHandler<CreateTransaction, ExecutionResult>
+public class CreateTransactionCommandHandler : IRequestHandler<CreateTransactionCommand, ExecutionResult>
 {
     private readonly IBudgetRepository _budgetRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IMediator _mediator;
 
-    public CreateTransactionHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator)
+    public CreateTransactionCommandHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator)
     {
         _budgetRepository = budgetRepository;
         _transactionRepository = transactionRepository;
         _mediator = mediator;
     }
     
-    public async Task<ExecutionResult> Handle(CreateTransaction request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
     {
         var budget = await _budgetRepository.GetByIdAsync(request.TransactionModel.BudgetId);
         if (budget is null)
@@ -45,7 +45,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransaction, Execu
         var existing = await _transactionRepository.GetByIdAsync(request.TransactionModel.Id);
         if (existing is not null)
         {
-            return await _mediator.Send(new UpdateTransaction()
+            return await _mediator.Send(new UpdateTransactionCommand()
             {
                 TransactionModel = request.TransactionModel,
                 UserId = request.UserId

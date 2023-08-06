@@ -22,7 +22,7 @@ public class TransactionsController : ApiControllerBase
     [HttpGet("{budgetId:int}")]
     public async Task<List<TransactionModel>> GetForBudget(int budgetId)
     {
-        return await _mediator.Send(new GetTransactionsForBudget()
+        return await _mediator.Send(new GetTransactionsForBudgetQuery()
         {
             BudgetId = budgetId,
             CurrentMonthOnly = false
@@ -32,7 +32,7 @@ public class TransactionsController : ApiControllerBase
     [HttpPost]
     public async Task CreateTransaction([FromBody] TransactionModel model)
     {
-        await _mediator.Send(new CreateTransaction()
+        await _mediator.Send(new CreateTransactionCommand()
         {
             TransactionModel = model,
             UserId = UserId

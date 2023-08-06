@@ -3,12 +3,12 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Queries;
 
-public class GetImportedTransactionHashList : IRequest<HashSet<string>>
+public class GetImportedTransactionHashListQuery : IRequest<HashSet<string>>
 {
     public int BudgetId { get; init; }
 }
 
-public class GetImportedTransactionHashListHandler : IRequestHandler<GetImportedTransactionHashList, HashSet<string>>
+public class GetImportedTransactionHashListHandler : IRequestHandler<GetImportedTransactionHashListQuery, HashSet<string>>
 {
     private readonly ITransactionRepository _transactionRepository;
 
@@ -17,7 +17,7 @@ public class GetImportedTransactionHashListHandler : IRequestHandler<GetImported
         _transactionRepository = transactionRepository;
     }
     
-    public async Task<HashSet<string>> Handle(GetImportedTransactionHashList request, CancellationToken cancellationToken)
+    public async Task<HashSet<string>> Handle(GetImportedTransactionHashListQuery request, CancellationToken cancellationToken)
     {
         return await _transactionRepository.GetHashListForBudget(request.BudgetId);
     }

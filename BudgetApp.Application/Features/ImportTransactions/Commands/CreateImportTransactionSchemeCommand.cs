@@ -7,24 +7,24 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.ImportTransactions.Commands;
 
-public class CreateImportTransactionScheme : IRequest
+public class CreateImportTransactionSchemeCommand : IRequest
 {
     public ImportTransactionSchemeModel ImportTransactionSchemeModel { get; init; }
 }
 
-public class CreateImportTransactionSchemeHandler : IRequestHandler<CreateImportTransactionScheme>
+public class CreateImportTransactionSchemeCommandHandler : IRequestHandler<CreateImportTransactionSchemeCommand>
 {
     private readonly IImportTransactionSchemeRepository _importTransactionSchemeRepository;
     private readonly IMapper _mapper;
 
-    public CreateImportTransactionSchemeHandler(IImportTransactionSchemeRepository importTransactionSchemeRepository,
+    public CreateImportTransactionSchemeCommandHandler(IImportTransactionSchemeRepository importTransactionSchemeRepository,
         IMapper mapper)
     {
         _importTransactionSchemeRepository = importTransactionSchemeRepository;
         _mapper = mapper;
     }
 
-    public async Task Handle(CreateImportTransactionScheme request, CancellationToken cancellationToken)
+    public async Task Handle(CreateImportTransactionSchemeCommand request, CancellationToken cancellationToken)
     {
         var entity = _mapper.Map<ImportTransactionSchemeEntity>(request.ImportTransactionSchemeModel);
         //TODO-PK test if mapping 

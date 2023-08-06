@@ -5,23 +5,23 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.BankAccounts.Queries;
 
-public class GetBankAccountsForBudget : IRequest<List<BankAccountModel>>
+public class GetBankAccountsForBudgetQuery : IRequest<List<BankAccountModel>>
 {
     public int BudgetId { get; init; }
 }
 
-public sealed class GetBankAccountsForBudgetHandler : IRequestHandler<GetBankAccountsForBudget, List<BankAccountModel>>
+public sealed class GetBankAccountsForBudgetQueryHandler : IRequestHandler<GetBankAccountsForBudgetQuery, List<BankAccountModel>>
 {
     private readonly IBankAccountRepository _bankAccountRepository;
     private readonly IMapper _mapper;
 
-    public GetBankAccountsForBudgetHandler(IBankAccountRepository bankAccountRepository, IMapper mapper)
+    public GetBankAccountsForBudgetQueryHandler(IBankAccountRepository bankAccountRepository, IMapper mapper)
     {
         _bankAccountRepository = bankAccountRepository;
         _mapper = mapper;
     }
     
-    public async Task<List<BankAccountModel>> Handle(GetBankAccountsForBudget request, CancellationToken cancellationToken)
+    public async Task<List<BankAccountModel>> Handle(GetBankAccountsForBudgetQuery request, CancellationToken cancellationToken)
     {
         var bankAccounts = await _bankAccountRepository.GetForBudget(request.BudgetId);
         return bankAccounts.Select(a => _mapper.Map<BankAccountModel>(a)).ToList();

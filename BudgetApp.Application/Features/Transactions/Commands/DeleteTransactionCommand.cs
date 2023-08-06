@@ -8,19 +8,19 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;
 
-public class DeleteTransaction : IRequest<ExecutionResult>
+public class DeleteTransactionCommand : IRequest<ExecutionResult>
 {
     public int UserId { get; init; }
     public int TransactionId { get; init; }
 }
 
-public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, ExecutionResult>
+public class DeleteTransactionCommandHandler : IRequestHandler<DeleteTransactionCommand, ExecutionResult>
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IBudgetRepository _budgetRepository;
     private readonly IMediator _mediator;
 
-    public DeleteTransactionHandler(
+    public DeleteTransactionCommandHandler(
         ITransactionRepository transactionRepository, 
         IBudgetRepository budgetRepository,
         IMediator mediator)
@@ -30,7 +30,7 @@ public class DeleteTransactionHandler : IRequestHandler<DeleteTransaction, Execu
         _mediator = mediator;
     }
 
-    public async Task<ExecutionResult> Handle(DeleteTransaction request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult> Handle(DeleteTransactionCommand request, CancellationToken cancellationToken)
     {
         var transaction = await _transactionRepository.GetByIdAsync(request.TransactionId);
         if (transaction is null)

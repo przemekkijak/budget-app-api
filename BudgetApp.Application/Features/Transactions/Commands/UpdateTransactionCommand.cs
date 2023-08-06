@@ -9,26 +9,26 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Transactions.Commands;
 
-public class UpdateTransaction : IRequest<ExecutionResult>
+public class UpdateTransactionCommand : IRequest<ExecutionResult>
 {
     public int UserId { get; init; }
     public TransactionModel TransactionModel { get; init; }
 }
 
-public class UpdateTransactionHandler : IRequestHandler<UpdateTransaction, ExecutionResult>
+public class UpdateTransactionCommandHandler : IRequestHandler<UpdateTransactionCommand, ExecutionResult>
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly IBudgetRepository _budgetRepository;
     private readonly IMediator _mediator;
 
-    public UpdateTransactionHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository, IMediator mediator)
+    public UpdateTransactionCommandHandler(ITransactionRepository transactionRepository, IBudgetRepository budgetRepository, IMediator mediator)
     {
         _transactionRepository = transactionRepository;
         _budgetRepository = budgetRepository;
         _mediator = mediator;
     }
     
-    public async Task<ExecutionResult> Handle(UpdateTransaction request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult> Handle(UpdateTransactionCommand request, CancellationToken cancellationToken)
     {
         var transaction = await _transactionRepository.GetByIdAsync(request.TransactionModel.Id);
         if (transaction is null)

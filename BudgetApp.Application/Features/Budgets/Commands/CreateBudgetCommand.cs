@@ -7,24 +7,24 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Budgets.Commands;
 
-public class CreateBudget : IRequest<ExecutionResult>
+public class CreateBudgetCommand : IRequest<ExecutionResult>
 {
     public int UserId { get; init; }
     public BudgetModel? Budget { get; set; }
 }
 
-public class CreateBudgetHandler : IRequestHandler<CreateBudget, ExecutionResult>
+public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, ExecutionResult>
 {
     private readonly IBudgetRepository _budgetRepository;
 
     private const string DefaultBudgetName = "Default";
 
-    public CreateBudgetHandler(IBudgetRepository budgetRepository)
+    public CreateBudgetCommandHandler(IBudgetRepository budgetRepository)
     {
         _budgetRepository = budgetRepository;
     }
     
-    public async Task<ExecutionResult> Handle(CreateBudget request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult> Handle(CreateBudgetCommand request, CancellationToken cancellationToken)
     {
         request.Budget ??= new BudgetModel()
         {
