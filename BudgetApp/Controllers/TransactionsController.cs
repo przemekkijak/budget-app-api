@@ -29,6 +29,16 @@ public class TransactionsController : ApiControllerBase
         });
     }
 
+    [HttpPatch]
+    public async Task UpdateTransaction([FromBody] TransactionModel model)
+    {
+        await _mediator.Send(new UpdateTransactionCommand()
+        {
+            TransactionModel = model,
+            UserId = UserId
+        });
+    }
+
     [HttpPost]
     public async Task CreateTransaction([FromBody] TransactionModel model)
     {

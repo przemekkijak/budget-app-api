@@ -36,4 +36,6 @@ public class TransactionModel
     public bool IsHashDuplicated { get; set; }
 
     public bool ShouldBeAdded { get; set; } = true;
+
+    public bool IsDeleted { get; set; }
 }

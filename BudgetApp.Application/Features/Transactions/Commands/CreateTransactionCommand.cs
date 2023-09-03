@@ -20,12 +20,15 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
     private readonly IBudgetRepository _budgetRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IMediator _mediator;
+    private readonly IBankAccountRepository _bankAccountRepository;
 
-    public CreateTransactionCommandHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator)
+    public CreateTransactionCommandHandler(IBudgetRepository budgetRepository, ITransactionRepository transactionRepository, IMediator mediator,
+        IBankAccountRepository bankAccountRepository)
     {
         _budgetRepository = budgetRepository;
         _transactionRepository = transactionRepository;
         _mediator = mediator;
+        _bankAccountRepository = bankAccountRepository;
     }
     
     public async Task<ExecutionResult> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
@@ -52,6 +55,12 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
             }, cancellationToken);
         }
 
+        var bankAccount = await _bankAccountRepository.GetByIdAsync(request.TransactionModel.BankAccountId);
+        if (bankAccount is null)
+        {
+            return new ExecutionResult(new ErrorInfo(ErrorCode.BankAccountError, MessageCode.BankAccountNotFound));
+        }
+
         var transactionEntity = new TransactionEntity
         {
             BudgetId = request.TransactionModel.BudgetId,
@@ -67,6 +76,8 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
             BankAccountId = request.TransactionModel.BankAccountId,
             ImportHash = request.TransactionModel.ImportHash
         };
+
+        transactionEntity.PaymentDate = TimeService.ConvertToUtcTime(transactionEntity.PaymentDate);
 
         await _transactionRepository.CreateAsync(transactionEntity);
 

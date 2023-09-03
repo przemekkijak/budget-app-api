@@ -25,4 +25,5 @@ public class TransactionEntity : EntityBase
     public DateTime PaymentDate { get; set; }
 
     public string? ImportHash { get; set; }
+    
 }

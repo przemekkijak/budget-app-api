@@ -50,6 +50,9 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
         }
         
         var transactionModels = transactionEntities.Select(a => _mapper.Map<TransactionModel>(a)).ToList();
-        return transactionModels.OrderByDescending(a => a.PaymentDate).ToList();
+        return transactionModels
+            .OrderByDescending(a => a.PaymentDate)
+            .ThenByDescending(a => a.Id)
+            .ToList();
     }
 }

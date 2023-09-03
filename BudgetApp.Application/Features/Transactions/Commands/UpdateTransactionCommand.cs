@@ -50,7 +50,6 @@ public class UpdateTransactionCommandHandler : IRequestHandler<UpdateTransaction
             return new ExecutionResult<bool>(new ErrorInfo(ErrorCode.BudgetError, MessageCode.Unauthorized));
         }
         
-
         var isBankAccountChanged = transaction.BankAccountId != request.TransactionModel.BankAccountId;
         var isStatusChanged = transaction.Status != request.TransactionModel.Status;
         var isAmountChanged = transaction.Amount != request.TransactionModel.Amount;
@@ -88,6 +87,7 @@ public class UpdateTransactionCommandHandler : IRequestHandler<UpdateTransaction
         transaction.Description = request.TransactionModel.Description;
         transaction.Amount = request.TransactionModel.Amount;
         transaction.Status = request.TransactionModel.Status;
+        transaction.IsDeleted = request.TransactionModel.IsDeleted;
         
         transaction.UpdateDate = TimeService.Now;
 

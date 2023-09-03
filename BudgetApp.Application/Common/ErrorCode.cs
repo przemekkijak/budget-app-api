@@ -5,5 +5,6 @@ public enum ErrorCode
     LoginError,
     UserNotFound,
     BudgetError,
-    TransactionError
+    TransactionError,
+    BankAccountError
 }

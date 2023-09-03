@@ -8,5 +8,6 @@ public enum MessageCode
     BudgetNotFound,
     Unauthorized,
     InvalidAmount,
-    TransactionNotFound
+    TransactionNotFound,
+    BankAccountNotFound
 }
