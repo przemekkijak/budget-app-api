@@ -6,6 +6,8 @@ public class BankAccountEntity : EntityBase
 {
     public virtual string Name { get; set; }
 
+    public virtual string Currency { get; set; }
+
     public virtual int UserId { get; init; }
 
     public virtual int BudgetId { get; init; }

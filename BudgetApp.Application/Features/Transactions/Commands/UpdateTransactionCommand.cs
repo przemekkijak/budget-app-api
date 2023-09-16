@@ -77,7 +77,7 @@ public class UpdateTransactionCommandHandler : IRequestHandler<UpdateTransaction
             {
                 await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount);
             }
-        } else if (isAmountChanged)
+        } else if (isAmountChanged && transaction.Status != TransactionStatusEnum.Scheduled)
         {
             await PublishAmountChangeNotification(transaction.BankAccountId, transaction.Amount * -1);
             await PublishAmountChangeNotification(transaction.BankAccountId, request.TransactionModel.Amount);
