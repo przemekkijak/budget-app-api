@@ -36,6 +36,9 @@ public class GetTransactionsForBudgetHandler : IRequestHandler<GetTransactionsFo
             var now = TimeService.Now;
             startDate = new DateTime(now.Year, now.Month, 1);
             endDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
+            
+            startDate = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
+            endDate = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
         }
 
         var transactionEntities = await _transactionRepository.GetForBudget(request.BudgetId, startDate, endDate);
