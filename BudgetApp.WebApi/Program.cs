@@ -11,6 +11,7 @@ using BudgetApp.Domain.EntityMappings;
 using BudgetApp.Domain.Repositories;
 using BudgetApp.Domain.Repositories.Interfaces;
 using BudgetApp.Infrastructure.DapperUtcDate;
+using BudgetApp.Infrastructure.Repositories;
 using Dapper;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;

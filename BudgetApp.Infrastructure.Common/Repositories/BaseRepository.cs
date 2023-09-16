@@ -1,10 +1,12 @@
 ﻿using System.Data;
+using BudgetApp.Domain;
+using BudgetApp.Domain.Common.Entities;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Repositories.Interfaces;
 using Dommel;
 using Npgsql;
 
-namespace BudgetApp.Domain.Repositories;
+namespace BudgetApp.Infrastructure.Repositories;
 
 public class BaseRepository : IBaseRepository
 {

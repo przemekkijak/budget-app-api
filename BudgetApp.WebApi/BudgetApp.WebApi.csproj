@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>BudgetApp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\BudgetApp.Application\BudgetApp.Application.csproj" />
       <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
+      <ProjectReference Include="..\BudgetApp.Infrastructure\BudgetApp.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

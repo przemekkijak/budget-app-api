@@ -1,7 +1,7 @@
-using BudgetApp.Core.Common;
+using BudgetApp.Application.Common.Models;
+using BudgetApp.Application.Common.Services;
 using BudgetApp.Core.Features.Transactions.Models;
 using BudgetApp.Core.Notifications;
-using BudgetApp.Core.Services;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Enums;
 using BudgetApp.Domain.Repositories.Interfaces;

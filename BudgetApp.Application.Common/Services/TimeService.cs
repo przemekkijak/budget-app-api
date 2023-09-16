@@ -1,4 +1,4 @@
-﻿namespace BudgetApp.Core.Services;
+﻿namespace BudgetApp.Application.Common.Services;
 
 public class TimeService
 {

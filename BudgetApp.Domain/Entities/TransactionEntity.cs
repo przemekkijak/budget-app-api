@@ -1,4 +1,5 @@
-﻿using BudgetApp.Domain.Enums;
+﻿using BudgetApp.Domain.Common.Entities;
+using BudgetApp.Domain.Enums;
 
 namespace BudgetApp.Domain.Entities;
 

@@ -1,6 +1,6 @@
 using AutoMapper;
+using BudgetApp.Application.Common.Services;
 using BudgetApp.Core.Features.Transactions.Models;
-using BudgetApp.Core.Services;
 using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;
 

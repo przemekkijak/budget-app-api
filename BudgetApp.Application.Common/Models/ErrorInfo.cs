@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BudgetApp.Core.Common
+namespace BudgetApp.Application.Common.Models
 {
     public class ErrorInfo
     {

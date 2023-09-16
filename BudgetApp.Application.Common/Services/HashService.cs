@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BudgetApp.Core.Services;
+namespace BudgetApp.Application.Common.Services;
 
 public static class HashService
 {

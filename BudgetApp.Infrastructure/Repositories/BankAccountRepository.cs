@@ -1,9 +1,10 @@
+using BudgetApp.Domain;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Repositories.Interfaces;
 using Dapper;
 using Dommel;
 
-namespace BudgetApp.Domain.Repositories;
+namespace BudgetApp.Infrastructure.Repositories;
 
 public class BankAccountRepository : BaseRepository<BankAccountEntity>, IBankAccountRepository
 {

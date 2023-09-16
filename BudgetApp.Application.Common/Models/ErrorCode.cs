@@ -1,4 +1,4 @@
-﻿namespace BudgetApp.Core.Common;
+﻿namespace BudgetApp.Application.Common.Models;
 
 public enum ErrorCode
 {

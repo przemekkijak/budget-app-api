@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BudgetApp.Application.Common\BudgetApp.Application.Common.csproj" />
       <ProjectReference Include="..\BudgetApp.Domain\BudgetApp.Domain.csproj" />
     </ItemGroup>
 

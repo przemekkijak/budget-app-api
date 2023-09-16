@@ -1,6 +1,6 @@
 using AutoMapper;
 using BCrypt;
-using BudgetApp.Core.Common;
+using BudgetApp.Application.Common.Models;
 using BudgetApp.Core.Features.Auth.Models;
 using BudgetApp.Domain.Repositories.Interfaces;
 using MediatR;

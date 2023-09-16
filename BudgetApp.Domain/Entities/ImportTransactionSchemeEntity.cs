@@ -1,3 +1,5 @@
+using BudgetApp.Domain.Common.Entities;
+
 namespace BudgetApp.Domain.Entities;
 
 public class ImportTransactionSchemeEntity : EntityBase

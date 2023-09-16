@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BudgetApp.Core.Common;
-using BudgetApp.Core.Services;
+using BudgetApp.Application.Common.Models;
+using BudgetApp.Application.Common.Services;
 using BudgetApp.Domain;
 using BudgetApp.Domain.Entities;
 using MediatR;

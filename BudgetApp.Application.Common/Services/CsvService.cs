@@ -1,8 +1,4 @@
-using System.Dynamic;
-using System.Globalization;
-using CsvHelper;
-
-namespace BudgetApp.Core.Services;
+namespace BudgetApp.Application.Common.Services;
 
 public static class CsvService
 {

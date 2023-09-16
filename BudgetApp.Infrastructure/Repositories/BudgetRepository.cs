@@ -1,8 +1,9 @@
-﻿using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain;
+using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Repositories.Interfaces;
 using Dommel;
 
-namespace BudgetApp.Domain.Repositories;
+namespace BudgetApp.Infrastructure.Repositories;
 
 public class BudgetRepository : BaseRepository<BudgetEntity>, IBudgetRepository
 {

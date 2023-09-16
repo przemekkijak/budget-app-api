@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace BudgetApp.Core.Common
+namespace BudgetApp.Application.Common.Models
 {
     [DebuggerDisplay("IsSuccess: {Success}")]
     public class ExecutionResult

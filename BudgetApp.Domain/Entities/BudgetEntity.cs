@@ -1,4 +1,6 @@
-﻿namespace BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Common.Entities;
+
+namespace BudgetApp.Domain.Entities;
 
 public class BudgetEntity : EntityBase
 {

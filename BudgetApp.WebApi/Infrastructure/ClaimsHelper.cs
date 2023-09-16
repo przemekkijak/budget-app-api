@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using BudgetApp.Core.Common;
+using BudgetApp.Application.Common.Models;
 
 namespace BudgetApp.Infrastructure
 {

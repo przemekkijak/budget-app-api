@@ -1,4 +1,5 @@
-﻿using BudgetApp.Domain.Entities;
+﻿using BudgetApp.Domain.Common.Entities;
+using BudgetApp.Domain.Entities;
 using Dapper.FluentMap.Dommel.Mapping;
 
 namespace BudgetApp.Domain.EntityMappings;

@@ -1,5 +1,5 @@
 using AutoMapper;
-using BudgetApp.Core.Common;
+using BudgetApp.Application.Common.Models;
 using BudgetApp.Core.Features.Budgets.Models;
 using BudgetApp.Domain.Entities;
 using BudgetApp.Domain.Repositories.Interfaces;
