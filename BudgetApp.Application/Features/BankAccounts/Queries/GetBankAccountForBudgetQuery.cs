@@ -24,6 +24,9 @@ public sealed class GetBankAccountsForBudgetQueryHandler : IRequestHandler<GetBa
     public async Task<List<BankAccountModel>> Handle(GetBankAccountsForBudgetQuery request, CancellationToken cancellationToken)
     {
         var bankAccounts = await _bankAccountRepository.GetForBudget(request.BudgetId);
-        return bankAccounts.Select(a => _mapper.Map<BankAccountModel>(a)).ToList();
+        return bankAccounts
+            .Select(a => _mapper.Map<BankAccountModel>(a))
+            .OrderBy(a => a.Id)
+            .ToList();
     }
 }

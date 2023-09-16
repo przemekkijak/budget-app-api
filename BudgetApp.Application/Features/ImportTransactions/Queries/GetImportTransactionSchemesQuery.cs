@@ -5,12 +5,12 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.ImportTransactions.Queries;
 
-public class GetImportTransactionSchemes : IRequest<List<ImportTransactionSchemeModel>>
+public class GetImportTransactionSchemesQuery : IRequest<List<ImportTransactionSchemeModel>>
 {
     public int UserId { get; init; }
 }
 
-public class GetImportTransactionSchemesHandler : IRequestHandler<GetImportTransactionSchemes,
+public class GetImportTransactionSchemesHandler : IRequestHandler<GetImportTransactionSchemesQuery,
         List<ImportTransactionSchemeModel>>
 {
     private readonly IImportTransactionSchemeRepository _importTransactionSchemeRepository;
@@ -23,7 +23,7 @@ public class GetImportTransactionSchemesHandler : IRequestHandler<GetImportTrans
         _mapper = mapper;
     }
 
-    public async Task<List<ImportTransactionSchemeModel>> Handle(GetImportTransactionSchemes request, CancellationToken cancellationToken)
+    public async Task<List<ImportTransactionSchemeModel>> Handle(GetImportTransactionSchemesQuery request, CancellationToken cancellationToken)
     {
         var entities = await _importTransactionSchemeRepository.GetForUser(request.UserId);
         return entities.Select(a => _mapper.Map<ImportTransactionSchemeModel>(a)).ToList();

@@ -20,7 +20,7 @@ public class BudgetsController : ApiControllerBase
     [HttpGet("")]
     public async Task<BudgetModel> GetDefaultBudget()
     {
-        var budget = await _mediator.Send(new GetBudget()
+        var budget = await _mediator.Send(new GetBudgetQuery()
         {
             UserId = UserId
         });

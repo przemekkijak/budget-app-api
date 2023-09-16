@@ -7,13 +7,13 @@ using MediatR;
 
 namespace BudgetApp.Core.Features.Budgets.Queries;
 
-public class GetBudget : IRequest<ExecutionResult<BudgetModel?>>
+public class GetBudgetQuery : IRequest<ExecutionResult<BudgetModel?>>
 {
     public int UserId { get; init; }
     public int? BudgetId { get; init; }
 }
 
-public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<BudgetModel?>>
+public class GetBudgetHandler : IRequestHandler<GetBudgetQuery, ExecutionResult<BudgetModel?>>
 {
     private readonly IBudgetRepository _budgetRepository;
     private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ public class GetBudgetHandler : IRequestHandler<GetBudget, ExecutionResult<Budge
         _mapper = mapper;
     }
     
-    public async Task<ExecutionResult<BudgetModel?>> Handle(GetBudget request, CancellationToken cancellationToken)
+    public async Task<ExecutionResult<BudgetModel?>> Handle(GetBudgetQuery request, CancellationToken cancellationToken)
     {
         BudgetEntity? budget;
         

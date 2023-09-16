@@ -81,8 +81,12 @@ public class CreateTransactionCommandHandler : IRequestHandler<CreateTransaction
 
         await _transactionRepository.CreateAsync(transactionEntity);
 
-        await _mediator.Publish(
-            new TransactionAmountChangedNotification(transactionEntity.BankAccountId, transactionEntity.Amount), cancellationToken);
+        if (transactionEntity.Status == TransactionStatusEnum.Completed)
+        {
+                    
+            await _mediator.Publish(
+                new TransactionAmountChangedNotification(transactionEntity.BankAccountId, transactionEntity.Amount), cancellationToken);
+        }
         
         return new ExecutionResult();
     }
