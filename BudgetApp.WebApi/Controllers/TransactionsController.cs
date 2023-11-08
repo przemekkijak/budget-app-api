@@ -25,7 +25,7 @@ public class TransactionsController : ApiControllerBase
         return await _mediator.Send(new GetTransactionsForBudgetQuery()
         {
             BudgetId = budgetId,
-            CurrentMonthOnly = true
+            CurrentMonthOnly = false
         });
     }
 
